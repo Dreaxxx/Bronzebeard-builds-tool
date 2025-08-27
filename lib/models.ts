@@ -1,4 +1,4 @@
-export type Tier = "PreBiS" | "M0" | "M+<10" | "M+10-14" | "M+15+";
+export type Tier = "Raid" | "M0" | "M+<10" | "M+10-14" | "M+15+";
 export type Slot =
   | "Head" | "Neck" | "Shoulder" | "Back" | "Chest"
   | "Wrist" | "Hands" | "Waist" | "Legs" | "Feet"
@@ -32,7 +32,7 @@ export type BuildItem = {
   href?: string;
 };
 
-export type Rarity = "Uncommon" | "Rare" | "Epic" | "Legendary";
+export type Rarity = "Rare" | "Epic" | "Legendary" | "Artifact";
 export type Enchant = {
   id: string;
   buildId: string;
@@ -54,5 +54,5 @@ export type Comment = {
   createdAt: number;
 };
 
-export const DEFAULT_TIERS: Tier[] = ["PreBiS","M0","M+<10","M+10-14","M+15+"];
-export const WOW_CLASSES = ["Warrior","Paladin","Hunter","Rogue","Priest","Shaman","Mage","Warlock","Druid","Death Knight"];
+export const DEFAULT_TIERS: Tier[] = ["Raid", "M0", "M+<10", "M+10-14", "M+15+"];
+export const WOW_CLASSES = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Shaman", "Mage", "Warlock", "Druid", "Death Knight"];

@@ -5,19 +5,19 @@ import { listEnchants, upsertEnchant, removeEnchant } from "@/lib/storage";
 import { Button, Input, Label, Card, Row, Select, Textarea } from "./ui";
 import SearchDrawer from "./SearchDrawer";
 
-const RARITIES: Rarity[] = ["Uncommon", "Rare", "Epic", "Legendary"];
+const RARITIES: Rarity[] = ["Rare", "Epic", "Legendary", "Artifact"];
 
 export default function EnchantEditor({ build }: { build: Build }) {
   const [enchants, setEnchants] = useState<Enchant[]>([]);
-  const [quota, setQuota] = useState({ total: 17, Uncommon: 4, Rare: 6, Epic: 6, Legendary: 1 });
+  const [quota, setQuota] = useState({ total: 11, Rare: 6, Epic: 3, Legendary: 1, Artifact: 1 });
   useEffect(() => { (async () => setEnchants(await listEnchants(build.id)))(); }, [build.id]);
 
   async function add() { const name = prompt("Enchant name?"); if (!name) return; await upsertEnchant({ buildId: build.id, name, rarity: "Epic", slot: "Mystic" }); setEnchants(await listEnchants(build.id)); }
   async function save(en: Enchant) { await upsertEnchant(en); setEnchants(await listEnchants(build.id)); }
   async function del(id: string) { if (!confirm("Delete this enchant?")) return; await removeEnchant(id); setEnchants(await listEnchants(build.id)); }
 
-  const counts = useMemo(() => enchants.reduce((m, e) => { (m.total++), (m as any)[e.rarity] = ((m as any)[e.rarity] || 0) + 1; return m; }, { total: 0, Uncommon: 0, Rare: 0, Epic: 0, Legendary: 0 } as any), [enchants]);
-  const over = { total: counts.total > quota.total, Uncommon: counts.Uncommon > quota.Uncommon, Rare: counts.Rare > quota.Rare, Epic: counts.Epic > quota.Epic, Legendary: counts.Legendary > quota.Legendary };
+  const counts = useMemo(() => enchants.reduce((m, e) => { (m.total++), (m as any)[e.rarity] = ((m as any)[e.rarity] || 0) + 1; return m; }, { total: 0, Artifact: 0, Rare: 0, Epic: 0, Legendary: 0 } as any), [enchants]);
+  const over = { total: counts.total > quota.total, Artifact: counts.Artifact > quota.Artifact, Rare: counts.Rare > quota.Rare, Epic: counts.Epic > quota.Epic, Legendary: counts.Legendary > quota.Legendary };
 
   return (
     <div className="space-y-4">
