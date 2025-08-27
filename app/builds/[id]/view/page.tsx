@@ -18,55 +18,59 @@ export default function ViewBuild() {
   const [enchants, setEnchants] = useState<any[]>([]);
   const [liking, setLiking] = useState(false);
 
-  useEffect(()=>{ (async ()=>{ const b = await getBuild(params.id); if (b) { setBuild(b); setTier(b.tiers[0]); } })(); }, [params.id]);
-  useEffect(()=>{ (async ()=>{ if (!build || !tier) return; setItems(await listItems(build.id, tier)); setEnchants(await listEnchants(build.id)); })(); }, [build, tier]);
+  useEffect(() => { (async () => { const b = await getBuild(params.id); if (b) { setBuild(b); setTier(b.tiers[0]); } })(); }, [params.id]);
+  useEffect(() => { (async () => { if (!build || !tier) return; setItems(await listItems(build.id, tier)); setEnchants(await listEnchants(build.id)); })(); }, [build, tier]);
 
-  const itemsBySlot = useMemo(()=>{ const m: Record<string, any[]> = {}; (SLOTS as any).forEach((s:string)=>m[s]=[]); for (const it of items) (m[it.slot]||[]).push(it); Object.keys(m).forEach(s=>m[s].sort((a,b)=>a.rank-b.rank)); return m; }, [items]);
+  const itemsBySlot = useMemo(() => { const m: Record<string, any[]> = {}; (SLOTS as any).forEach((s: string) => m[s] = []); for (const it of items) (m[it.slot] || []).push(it); Object.keys(m).forEach(s => m[s].sort((a, b) => a.rank - b.rank)); return m; }, [items]);
   if (!build) return <p>Loading…</p>;
 
-  async function like(){
-    if (!build.isPublic) return;
+  async function like() {
+    const b = build;
+    if (!b || !b.isPublic) return;
+
     try {
       setLiking(true);
-      await likeLocal(build.id);
-      try { await likePublicBuild(build.id); } catch {}
-      const updated = await getBuild(build.id);
+      await likeLocal(b.id);
+      try { await likePublicBuild(b.id); } catch { }
+      const updated = await getBuild(b.id);
       if (updated) setBuild(updated);
-    } catch (e:any) {
+    } catch (e: any) {
       alert(e.message || String(e));
-    } finally { setLiking(false); }
+    } finally {
+      setLiking(false);
+    }
   }
 
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between">
-        <div><div className="text-sm text-neutral-500">{build.realm} • {build.role}{build.classTag?` • ${build.classTag}`:''}</div><h1 className="text-2xl font-bold">{build.title}</h1></div>
+        <div><div className="text-sm text-neutral-500">{build.realm} • {build.role}{build.classTag ? ` • ${build.classTag}` : ''}</div><h1 className="text-2xl font-bold">{build.title}</h1></div>
         <div className="flex items-center gap-2">
-          <Pill>❤️ {build.likes||0}</Pill>
+          <Pill>❤️ {build.likes || 0}</Pill>
           {build.isPublic && <Button disabled={liking} onClick={like}>{t('like.add')}</Button>}
           <a className="btn" href={`/builds/${build.id}/edit`}>{t('common.edit')}</a>
         </div>
       </header>
 
-      <Card><div className="flex flex-wrap items-center gap-2">{build.tiers.map(ti => (<button key={ti} className={"badge " + (tier===ti ? "border-blue-500" : "")} onClick={()=>setTier(ti)}>{ti}</button>))}</div></Card>
+      <Card><div className="flex flex-wrap items-center gap-2">{build.tiers.map(ti => (<button key={ti} className={"badge " + (tier === ti ? "border-blue-500" : "")} onClick={() => setTier(ti)}>{ti}</button>))}</div></Card>
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">BiS — {tier}</h2>
         <div className="grid md:grid-cols-2 gap-3">
-          {(SLOTS as any).map((slot:string) => (
+          {(SLOTS as any).map((slot: string) => (
             <Card key={slot}>
               <h3 className="font-semibold">{slot}</h3>
               <ul className="mt-2 space-y-1">
-                {(itemsBySlot[slot]||[]).map(it => (
+                {(itemsBySlot[slot] || []).map(it => (
                   <li key={it.id} className="text-sm">
-                    <span className="badge mr-2">{it.rank===1 ? "BiS" : `Alt ${it.rank}`}</span>
+                    <span className="badge mr-2">{it.rank === 1 ? "BiS" : `Alt ${it.rank}`}</span>
                     <span className="font-medium">{it.name}</span>
                     {it.source && <span className="text-neutral-500"> — {it.source}</span>}
                     {it.notes && <div className="text-xs text-neutral-500">{it.notes}</div>}
                     {it.href && <div><a className="text-xs underline" href={it.href} target="_blank" rel="noreferrer">Ascension DB</a></div>}
                   </li>
                 ))}
-                {(itemsBySlot[slot]||[]).length===0 && <li className="text-sm text-neutral-500">{t('empty.none')}</li>}
+                {(itemsBySlot[slot] || []).length === 0 && <li className="text-sm text-neutral-500">{t('empty.none')}</li>}
               </ul>
             </Card>
           ))}
@@ -82,13 +86,13 @@ export default function ViewBuild() {
                 <span className="badge mr-2">{en.rarity}</span>
                 <span className="font-medium">{en.name}</span>
                 {en.slot && <span className="text-neutral-500"> • {en.slot}</span>}
-                {en.tags?.length>0 && <span className="text-neutral-500"> • {en.tags.join(", ")}</span>}
+                {en.tags?.length > 0 && <span className="text-neutral-500"> • {en.tags.join(", ")}</span>}
                 {typeof en.cost === "number" && <span className="text-neutral-500"> • cost {en.cost}</span>}
                 {en.notes && <div className="text-xs text-neutral-500">{en.notes}</div>}
                 {en.href && <div><a className="text-xs underline" href={en.href} target="_blank" rel="noreferrer">Ascension DB</a></div>}
               </li>
             ))}
-            {enchants.length===0 && <li className="text-sm text-neutral-500">{t('empty.none')}</li>}
+            {enchants.length === 0 && <li className="text-sm text-neutral-500">{t('empty.none')}</li>}
           </ul>
         </Card>
       </section>
