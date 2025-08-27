@@ -54,7 +54,7 @@ export default function EditBuild() {
               <label className="flex items-center gap-2"><input type="checkbox" disabled={!build.isPublic} checked={build.commentsEnabled} onChange={e=>{ setBuild({ ...build, commentsEnabled: e.target.checked }); }} /><span>{t('form.enableComments')}</span></label>
             </div>
             <div className="flex items-center gap-3">
-              <Button onClick={async ()=>{ await (await import('@/**/lib/storage'.replace('/**/',''))).updateBuild(build.id, build); alert("Saved."); }}>{t('common.save')}</Button>
+              <Button onClick={async () => { await updateBuild(build.id, build); alert("Saved."); }}>{t('common.save')}</Button>
             </div>
 
             <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800">
