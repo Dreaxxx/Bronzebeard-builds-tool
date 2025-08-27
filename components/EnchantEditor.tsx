@@ -12,9 +12,9 @@ export default function EnchantEditor({ build }: { build: Build }) {
   const [quota, setQuota] = useState({ total: 11, Rare: 6, Epic: 3, Legendary: 1, Artifact: 1 });
   useEffect(() => { (async () => setEnchants(await listEnchants(build.id)))(); }, [build.id]);
 
-  async function add() { const name = prompt("Enchant name?"); if (!name) return; await upsertEnchant({ buildId: build.id, name, rarity: "Epic", slot: "Mystic" }); setEnchants(await listEnchants(build.id)); }
+  async function add() { const name = prompt("Enchant name ?"); if (!name) return; await upsertEnchant({ buildId: build.id, name, rarity: "Epic", slot: "Mystic" }); setEnchants(await listEnchants(build.id)); }
   async function save(en: Enchant) { await upsertEnchant(en); setEnchants(await listEnchants(build.id)); }
-  async function del(id: string) { if (!confirm("Delete this enchant?")) return; await removeEnchant(id); setEnchants(await listEnchants(build.id)); }
+  async function del(id: string) { if (!confirm("Delete this enchant ?")) return; await removeEnchant(id); setEnchants(await listEnchants(build.id)); }
 
   const counts = useMemo(() => enchants.reduce((m, e) => { (m.total++), (m as any)[e.rarity] = ((m as any)[e.rarity] || 0) + 1; return m; }, { total: 0, Artifact: 0, Rare: 0, Epic: 0, Legendary: 0 } as any), [enchants]);
   const over = { total: counts.total > quota.total, Artifact: counts.Artifact > quota.Artifact, Rare: counts.Rare > quota.Rare, Epic: counts.Epic > quota.Epic, Legendary: counts.Legendary > quota.Legendary };
@@ -35,7 +35,7 @@ export default function EnchantEditor({ build }: { build: Build }) {
 
       <div id="ench-search">
         <SearchDrawer kind="enchants" onPick={async (r) => {
-          await upsertEnchant({ buildId: build.id, name: r.name, rarity: "Epic", slot: "Mystic", href: r.href });
+          await upsertEnchant({ buildId: build.id, name: r.name, rarity: "Epic", slot: "Mystic Enchant", href: r.href });
           setEnchants(await listEnchants(build.id));
         }} />
       </div>
@@ -46,7 +46,7 @@ export default function EnchantEditor({ build }: { build: Build }) {
             <Row>
               <Input value={en.name} onChange={e => save({ ...en, name: e.target.value })} />
               <Select value={en.rarity} onChange={e => save({ ...en, rarity: e.target.value as any })}>{RARITIES.map(r => (<option key={r} value={r}>{r}</option>))}</Select>
-              <Input placeholder="Slot (Mystic/Chest/...)" value={en.slot} onChange={e => save({ ...en, slot: e.target.value })} />
+              <Input readOnly placeholder="Slot (Mystic/Chest/...)" value={en.slot} onChange={e => save({ ...en, slot: e.target.value })} />
               <Input placeholder="Cost" type="number" value={en.cost ?? 0} onChange={e => save({ ...en, cost: Number(e.target.value) })} />
               <Button onClick={() => del(en.id)}>Delete</Button>
             </Row>

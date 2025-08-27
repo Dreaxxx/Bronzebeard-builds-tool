@@ -47,7 +47,7 @@ export default function TierEditor({ build }: { build: Build }) {
                     <Button onClick={() => del(it.id)}>{'Delete'}</Button>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Input placeholder="Source (dungeon/key/chest)" value={it.source ?? ""} onChange={e => saveItem({ ...it, source: e.target.value })} />
+                    <Input placeholder="Source (dungeon/raid/worldforged/craft)" value={it.source ?? ""} onChange={e => saveItem({ ...it, source: e.target.value })} />
                   </div>
                   <div className="flex items-center gap-2">
                     <Textarea placeholder='Notes or stats (ex: {"SP":52,"Haste":28})' value={it.notes ?? ""} onChange={e => saveItem({ ...it, notes: e.target.value })} />

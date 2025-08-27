@@ -76,7 +76,6 @@ export default function SearchDrawer({ kind, onPick, slotSuggestion }: { kind: '
             </div>
           </div>
         ))}
-        {!loading && results.length === 0 && q && <div className="text-sm text-neutral-500">No results.</div>}
       </div>
     </Card>
   );

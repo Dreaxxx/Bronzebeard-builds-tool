@@ -48,27 +48,40 @@ export async function GET(req: NextRequest) {
   const q = (searchParams.get('q') || '').trim();
   const kind = (searchParams.get('type') || 'items').trim(); // 'items' | 'enchants'
   const slot = (searchParams.get('slot') || '').trim();
-  const quality = (searchParams.get('quality') || '').trim(); // Artifact|Rare|Epic|Legendary
+  const quality = (searchParams.get('quality') || '').trim();
   const ilvlMin = Number(searchParams.get('ilvlMin') || '0') || 0;
   const ilvlMax = Number(searchParams.get('ilvlMax') || '0') || 0;
+
   if (!q) return NextResponse.json({ results: [] });
+
   const encoded = encodeURIComponent(q);
   const base = 'https://db.ascension.gg/';
-  const url = kind === 'enchants'
-    ? `${base}?filter=na%3D${encoded}&spells=`
-    : `${base}?filter=na%3D${encoded}&items=`;
+
+  const urlSearch = `${base}?search=${encoded}${kind === 'enchants' ? '&spells=' : '&items='}`;
+
+  const urlFilter = `${base}?filter=na%3D${encoded}${kind === 'enchants' ? '&spells=' : '&items='}`;
+
   try {
-    const res = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 BronzeBeardReady' } });
-    const text = await res.text();
+    let res = await fetch(urlSearch, { headers: { 'User-Agent': 'Mozilla/5.0 BronzeBeardReady' } });
+    let text = await res.text();
+
+    if (!text || text.length < 1000) {
+      res = await fetch(urlFilter, { headers: { 'User-Agent': 'Mozilla/5.0 BronzeBeardReady' } });
+      text = await res.text();
+    }
+
     let results = parseResults(text).filter(r => r.type === (kind === 'enchants' ? 'spell' : 'item'));
+
     if (kind === 'items') {
       if (quality) results = results.filter(r => !quality || r.quality === quality);
       if (slot) results = results.filter(r => !slot || (r.slotText ? r.slotText.toLowerCase().includes(slot.toLowerCase()) : true));
       if (ilvlMin) results = results.filter(r => typeof r.ilvl === 'number' ? (r.ilvl as number) >= ilvlMin : true);
       if (ilvlMax) results = results.filter(r => typeof r.ilvl === 'number' ? (r.ilvl as number) <= ilvlMax : true);
     }
-    return NextResponse.json({ results, source: url });
+
+    // expose l’URL de recherche (sera utilisée par “Open in DB” dans l’UI)
+    return NextResponse.json({ results, source: urlSearch });
   } catch (e: any) {
-    return NextResponse.json({ results: [], error: String(e), source: url }, { status: 200 });
+    return NextResponse.json({ results: [], error: String(e), source: urlSearch }, { status: 200 });
   }
 }
