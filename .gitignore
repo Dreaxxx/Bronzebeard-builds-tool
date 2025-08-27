@@ -1,0 +1,44 @@
+# Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tgz
+
+# Next.js
+.next/
+out/
+.vercel/
+
+# Env files (gardés localement)
+.env
+.env.local
+.env.*.local
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+logs/
+*.log
+*.log.*
+pids/
+*.pid
+*.seed
+
+# Cache & coverage
+.cache/
+coverage/
+
+# Editors / IDE
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# OS cruft
+.DS_Store
+Thumbs.db
+
+# Misc
+*.pem

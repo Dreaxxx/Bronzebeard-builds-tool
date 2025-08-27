@@ -1,0 +1,1 @@
+export function uid(){ return (typeof crypto!=='undefined'&&'randomUUID'in crypto)?(crypto as any).randomUUID():Math.random().toString(36).slice(2)+Date.now().toString(36); }

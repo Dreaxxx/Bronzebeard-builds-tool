@@ -1,0 +1,75 @@
+name: CI & Deploy (Vercel)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint --if-present
+
+      - name: Build Next.js
+        run: npm run build
+
+  deploy:
+    name: Deploy to Vercel
+    needs: build
+    runs-on: ubuntu-latest
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install deps
+        run: npm ci
+
+      # Récupère les variables d'env de Vercel (preview ou production)
+      - name: Pull Vercel env (Preview/PR)
+        if: ${{ github.event_name == 'pull_request' }}
+        run: npx vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
+
+      - name: Pull Vercel env (Production)
+        if: ${{ github.event_name == 'push' }}
+        run: npx vercel pull --yes --environment=production --token=$VERCEL_TOKEN
+
+      - name: Build with Vercel
+        run: npx vercel build --token=$VERCEL_TOKEN
+
+      # PR → déploiement preview ; Push main → déploiement production
+      - name: Deploy Preview
+        if: ${{ github.event_name == 'pull_request' }}
+        run: npx vercel deploy --prebuilt --token=$VERCEL_TOKEN
+
+      - name: Deploy Production
+        if: ${{ github.event_name == 'push' }}
+        run: npx vercel deploy --prebuilt --prod --token=$VERCEL_TOKEN
