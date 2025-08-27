@@ -14,7 +14,171 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      build_enchants: {
+        Row: {
+          build_id: string | null
+          cost: number | null
+          href: string | null
+          id: string
+          name: string
+          notes: string | null
+          rarity: string
+          slot: string
+          tags: string[]
+        }
+        Insert: {
+          build_id?: string | null
+          cost?: number | null
+          href?: string | null
+          id: string
+          name: string
+          notes?: string | null
+          rarity: string
+          slot: string
+          tags?: string[]
+        }
+        Update: {
+          build_id?: string | null
+          cost?: number | null
+          href?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          rarity?: string
+          slot?: string
+          tags?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_enchants_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      build_items: {
+        Row: {
+          build_id: string | null
+          href: string | null
+          id: string
+          name: string
+          notes: string | null
+          rank: number
+          slot: string
+          source: string | null
+          stats: Json
+          tier: string
+        }
+        Insert: {
+          build_id?: string | null
+          href?: string | null
+          id: string
+          name: string
+          notes?: string | null
+          rank?: number
+          slot: string
+          source?: string | null
+          stats?: Json
+          tier: string
+        }
+        Update: {
+          build_id?: string | null
+          href?: string | null
+          id?: string
+          name?: string
+          notes?: string | null
+          rank?: number
+          slot?: string
+          source?: string | null
+          stats?: Json
+          tier?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "build_items_build_id_fkey"
+            columns: ["build_id"]
+            isOneToOne: false
+            referencedRelation: "builds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      builds: {
+        Row: {
+          class_tag: string | null
+          comments_enabled: boolean
+          created_at: string
+          id: string
+          is_public: boolean
+          likes: number
+          owner: string | null
+          realm: string
+          role: string
+          tier_order: Json
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          class_tag?: string | null
+          comments_enabled?: boolean
+          created_at?: string
+          id: string
+          is_public?: boolean
+          likes?: number
+          owner?: string | null
+          realm: string
+          role: string
+          tier_order?: Json
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          class_tag?: string | null
+          comments_enabled?: boolean
+          created_at?: string
+          id?: string
+          is_public?: boolean
+          likes?: number
+          owner?: string | null
+          realm?: string
+          role?: string
+          tier_order?: Json
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "builds_owner_fkey"
+            columns: ["owner"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          id: string
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id: string
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          id?: string
+          username?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
