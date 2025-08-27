@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { SLOTS } from "@/lib/slots";
-import type { Build, BuildItem, Tier } from "@/lib/models";
+import type { Build, BuildItem, Slot, Tier } from "@/lib/models";
 import { listItems, upsertItem, removeItem } from "@/lib/storage";
 import { Button, Input, Label, Card, Select, Textarea } from "./ui";
 import { useI18n } from "@/lib/i18n/store";
@@ -13,7 +13,7 @@ export default function TierEditor({ build }: { build: Build }) {
   const [items, setItems] = useState<BuildItem[]>([]);
   useEffect(()=>{ (async ()=> setItems(await listItems(build.id, tier)))(); }, [build.id, tier]);
 
-  async function addItem(slot: string){ const name = prompt(`Item name for ${slot}?`); if(!name) return; await upsertItem({ buildId: build.id, slot, tier, name, rank: 1 }); setItems(await listItems(build.id, tier)); }
+  async function addItem(slot: Slot){ const name = prompt(`Item name for ${slot}?`); if(!name) return; await upsertItem({ buildId: build.id, slot, tier, name, rank: 1 }); setItems(await listItems(build.id, tier)); }
   async function saveItem(it: BuildItem){ await upsertItem(it); setItems(await listItems(build.id, tier)); }
   async function del(id: string){ if(!confirm("Delete this item?")) return; await removeItem(id); setItems(await listItems(build.id, tier)); }
 
@@ -27,7 +27,7 @@ export default function TierEditor({ build }: { build: Build }) {
         <div className="text-sm text-neutral-500">{t('slot.clickAdd')}</div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {(SLOTS as any).map((slot:string)=>(
+        {(SLOTS as any).map((slot:Slot)=>(
           <Card key={slot}>
             <div className="flex items-center justify-between mb-2">
               <h3 className="font-semibold">{slot}</h3>
