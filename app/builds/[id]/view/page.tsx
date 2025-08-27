@@ -1,18 +1,19 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { getBuild, listItems, listEnchants, likeLocal } from "@/lib/storage";
+import { getBuild, listItems, listEnchants, likeLocal, putBuildDeep } from "@/lib/storage";
 import type { Build, Tier } from "@/lib/models";
 import { Card, Button, Pill } from "@/components/ui";
 import { SLOTS } from "@/lib/slots";
 import CommentThread from "@/components/CommentThread";
-import { likePublicBuild } from "@/lib/remote";
+import { likePublicBuild, fetchBuildBundleFromCloud } from "@/lib/remote";
 import { useI18n } from "@/lib/i18n/store";
 
 export default function ViewBuild() {
   const { t } = useI18n();
   const params = useParams<{ id: string }>();
   const [build, setBuild] = useState<Build | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [tier, setTier] = useState<Tier | null>(null);
   const [items, setItems] = useState<any[]>([]);
   const [enchants, setEnchants] = useState<any[]>([]);
@@ -21,7 +22,28 @@ export default function ViewBuild() {
   useEffect(() => { (async () => { const b = await getBuild(params.id); if (b) { setBuild(b); setTier(b.tiers[0]); } })(); }, [params.id]);
   useEffect(() => { (async () => { if (!build || !tier) return; setItems(await listItems(build.id, tier)); setEnchants(await listEnchants(build.id)); })(); }, [build, tier]);
 
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setError(null);
+      let b = await getBuild(params.id);
+      if (!cancelled && b) { setBuild(b); return; }
+
+      try {
+        const bundle = await fetchBuildBundleFromCloud(params.id);
+        if (!bundle) { if (!cancelled) setError("Build not found or not public."); return; }
+        await putBuildDeep(bundle); // hydrate local pour les sous-composants
+        if (!cancelled) setBuild(bundle.build);
+      } catch (e: any) {
+        if (!cancelled) setError(e.message || String(e));
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [params.id]);
+
   const itemsBySlot = useMemo(() => { const m: Record<string, any[]> = {}; (SLOTS as any).forEach((s: string) => m[s] = []); for (const it of items) (m[it.slot] || []).push(it); Object.keys(m).forEach(s => m[s].sort((a, b) => a.rank - b.rank)); return m; }, [items]);
+
+  if (error) return <p className="text-red-600">{error}</p>;
   if (!build) return <p>Loading…</p>;
 
   async function like() {

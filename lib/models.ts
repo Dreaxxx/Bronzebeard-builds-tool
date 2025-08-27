@@ -5,11 +5,13 @@ export type Slot =
   | "Ring1" | "Ring2" | "Trinket1" | "Trinket2"
   | "Weapon" | "OffHand" | "Ranged" | "Tabard";
 
+export type Role = "Caster/Range" | "Melee" | "Tank" | "Healer";
+
 export type Build = {
   id: string;
   title: string;
   realm: string;
-  role: "Caster/Range" | "Melee" | "Tank" | "Healer";
+  role: string;
   classTag?: string;
   tiers: Tier[];
   createdAt: number;

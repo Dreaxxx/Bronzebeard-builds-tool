@@ -59,3 +59,16 @@ export async function likeLocal(buildId: string) {
   await db.builds.update(buildId, { likes: (b.likes || 0) + 1, updatedAt: Date.now() });
   if (typeof window !== 'undefined') localStorage.setItem(key, '1');
 }
+
+export async function putBuildDeep(bundle: {
+  build: Build; items: BuildItem[]; enchants: Enchant[];
+}) {
+  const { build, items, enchants } = bundle;
+  await db.transaction('rw', db.builds, db.items, db.enchants, async () => {
+    await db.builds.put(build); // même id (cloud) côté local
+    await db.items.where('buildId').equals(build.id).delete();
+    await db.enchants.where('buildId').equals(build.id).delete();
+    if (items.length) await db.items.bulkPut(items);
+    if (enchants.length) await db.enchants.bulkPut(enchants);
+  });
+}

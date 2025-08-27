@@ -22,3 +22,63 @@ export async function uploadBuild(build: Build, items: BuildItem[], enchants: En
   const { error: eDelEn } = await sb.from("build_enchants").delete().eq("build_id", build.id); if (eDelEn) throw eDelEn;
   if (enchants.length) { const payload = enchants.map(en => ({ id: en.id, build_id: build.id, name: en.name, rarity: en.rarity, slot: en.slot, cost: en.cost ?? null, notes: en.notes ?? null, href: en.href ?? null })); const { error: e3 } = await sb.from("build_enchants").insert(payload); if (e3) throw e3; }
 }
+
+export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
+  build: Build; items: BuildItem[]; enchants: Enchant[];
+} | null> {
+  const sb = supabase(); if (!sb) throw new Error("Supabase not configured");
+
+  const { data: b, error: e1 } = await sb
+    .from("builds")
+    .select("id, owner, title, realm, role, class_tag, tier_order, is_public, comments_enabled, description, likes, created_at, updated_at")
+    .eq("id", buildId).maybeSingle();
+
+  if (e1) throw e1;
+  if (!b) return null;
+
+  const [{ data: items = [] }, { data: enchants = [] }] = await Promise.all([
+    sb.from("build_items").select("*").eq("build_id", buildId).order("rank", { ascending: true }),
+    sb.from("build_enchants").select("*").eq("build_id", buildId),
+  ]);
+
+  const build: Build = {
+    id: b.id,
+    title: b.title,
+    realm: b.realm,
+    role: b.role,
+    classTag: b.class_tag ?? undefined,
+    tiers: (b.tier_order as any) ?? [],
+    isPublic: b.is_public,
+    commentsEnabled: b.comments_enabled,
+    description: b.description ?? null,
+    likes: b.likes ?? 0,
+    createdAt: Date.parse(b.created_at),
+    updatedAt: Date.parse(b.updated_at),
+  };
+
+  const mappedItems: BuildItem[] = items!.map((it: any) => ({
+    id: it.id,
+    buildId: it.build_id,
+    tier: it.tier,
+    slot: it.slot,
+    rank: it.rank,
+    name: it.name,
+    stats: it.stats ?? {},
+    source: it.source ?? undefined,
+    notes: it.notes ?? undefined,
+    href: it.href ?? null,
+  }));
+
+  const mappedEnchants: Enchant[] = enchants!.map((en: any) => ({
+    id: en.id,
+    buildId: en.build_id,
+    name: en.name,
+    rarity: en.rarity,
+    slot: en.slot,
+    cost: en.cost ?? undefined,
+    notes: en.notes ?? undefined,
+    href: en.href ?? null,
+  }));
+
+  return { build, items: mappedItems, enchants: mappedEnchants };
+}

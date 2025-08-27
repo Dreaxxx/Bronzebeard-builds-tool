@@ -24,7 +24,6 @@ export type Database = {
           notes: string | null
           rarity: string
           slot: string
-          tags: string[]
         }
         Insert: {
           build_id?: string | null
@@ -35,7 +34,6 @@ export type Database = {
           notes?: string | null
           rarity: string
           slot: string
-          tags?: string[]
         }
         Update: {
           build_id?: string | null
@@ -46,7 +44,6 @@ export type Database = {
           notes?: string | null
           rarity?: string
           slot?: string
-          tags?: string[]
         }
         Relationships: [
           {
@@ -110,6 +107,7 @@ export type Database = {
           class_tag: string | null
           comments_enabled: boolean
           created_at: string
+          description: string | null
           id: string
           is_public: boolean
           likes: number
@@ -124,6 +122,7 @@ export type Database = {
           class_tag?: string | null
           comments_enabled?: boolean
           created_at?: string
+          description?: string | null
           id: string
           is_public?: boolean
           likes?: number
@@ -138,6 +137,7 @@ export type Database = {
           class_tag?: string | null
           comments_enabled?: boolean
           created_at?: string
+          description?: string | null
           id?: string
           is_public?: boolean
           likes?: number
