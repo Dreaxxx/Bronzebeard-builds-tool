@@ -14,7 +14,7 @@ export default function Page() {
   useEffect(() => { refresh(); }, []);
 
   async function createDefault() {
-    const b = await createBuild({ title: "New build", realm: "BronzeBeard", role: "Caster", classTag: "Mage", tiers: ["Raid", "M0", "M+<10", "M+10-14", "M+15+"], isPublic: false, commentsEnabled: false });
+    const b = await createBuild({ title: "New build", realm: "BronzeBeard", role: "Caster/Range", classTag: "Mage", tiers: ["Raid", "M0", "M+<10", "M+10-14", "M+15+"], isPublic: false, commentsEnabled: false });
     location.href = `/builds/${b.id}/edit`;
   }
 

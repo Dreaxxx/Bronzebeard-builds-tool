@@ -11,7 +11,7 @@ export default function BuildForm({ initial, onSubmit }: Props) {
   const { t } = useI18n();
   const [title, setTitle] = useState(initial?.title ?? "");
   const [realm, setRealm] = useState(initial?.realm ?? "BronzeBeard");
-  const [role, setRole] = useState<Build['role']>(initial?.role ?? "Caster");
+  const [role, setRole] = useState<Build['role']>(initial?.role ?? "Caster/Range");
   const [classTag, setClassTag] = useState<string>(initial?.classTag ?? "Mage");
   const [tiersStr, setTiersStr] = useState((initial?.tiers ?? DEFAULT_TIERS).join(","));
   const [isPublic, setIsPublic] = useState((initial as any)?.isPublic ?? false);
@@ -24,7 +24,7 @@ export default function BuildForm({ initial, onSubmit }: Props) {
         <Row>
           <div className="grow"><Label>{t('common.realm')}</Label><Input placeholder="BronzeBeard / CoA" value={realm} onChange={e => setRealm(e.target.value)} /></div>
           <div className="w-48"><Label>{t('common.role')}</Label><Select value={role} onChange={e => setRole(e.target.value as any)}>
-            <option value="Caster">Caster</option><option value="Melee">Melee</option><option value="Tank">Tank</option><option value="Healer">Healer</option>
+            <option value="Caster/Range">Caster/Range</option><option value="Melee">Melee</option><option value="Tank">Tank</option><option value="Healer">Healer</option>
           </Select></div>
           <div className="w-56"><Label>{t('common.class')}</Label><Select value={classTag} onChange={e => setClassTag(e.target.value)}>{WOW_CLASSES.map(c => (<option key={c} value={c}>{c}</option>))}</Select></div>
         </Row>

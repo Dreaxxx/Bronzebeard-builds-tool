@@ -9,7 +9,7 @@ export type Build = {
   id: string;
   title: string;
   realm: string;
-  role: "Caster" | "Melee" | "Tank" | "Healer";
+  role: "Caster/Range" | "Melee" | "Tank" | "Healer";
   classTag?: string;
   tiers: Tier[];
   createdAt: number;

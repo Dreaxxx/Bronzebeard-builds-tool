@@ -1,7 +1,8 @@
 {
-  "app.title": "BronzeBeard Ready",
+  "app.title": "BronzeBeard Builds Manager",
   "nav.explore": "Explorar",
   "nav.yourBuilds": "Tus builds",
+  "nav.login": "Conexión (Discord)",
   "common.public": "Público",
   "common.private": "Privado",
   "common.class": "Clase",
