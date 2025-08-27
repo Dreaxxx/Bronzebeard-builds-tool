@@ -1,9 +1,10 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import type { Build } from "@/lib/models";
 import { getBuild, updateBuild } from "@/lib/storage";
-import { Button, Card, Input, Label, Select } from "@/components/ui";
+import { Button, Card, Input, Label, Select, Textarea } from "@/components/ui";
 import TierEditor from "@/components/TierEditor";
 import EnchantEditor from "@/components/EnchantEditor";
 import SyncButtons from "@/components/SyncButtons";
@@ -30,6 +31,16 @@ export default function EditBuild() {
         <a className="btn" href={`/builds/${build.id}/view`}>Public preview</a>
       </div>
 
+      <div>
+        <Label>Description (≤ 1000)</Label>
+        <Textarea
+          maxLength={1000}
+          value={build.description ?? ""}
+          onChange={e => { setBuild({ ...build, description: e.target.value }); }}
+        />
+        <p className="text-xs text-neutral-500">{(build.description?.length ?? 0)}/1000</p>
+      </div>
+
       <div className="flex gap-2">
         <button className={"btn " + (tab === "bis" ? "btn-primary" : "")} onClick={() => setTab("bis")}>{t('build.tabs.bis')}</button>
         <button className={"btn " + (tab === "enchants" ? "btn-primary" : "")} onClick={() => setTab("enchants")}>{t('build.tabs.enchants')}</button>
@@ -43,7 +54,6 @@ export default function EditBuild() {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="grow"><Label>{t('common.title')}</Label><Input value={build.title} onChange={e => { setBuild({ ...build, title: e.target.value }); }} /></div>
-              <div className="w-56"><Label>{t('common.realm')}</Label><Input value={build.realm} onChange={e => { setBuild({ ...build, realm: e.target.value }); }} /></div>
               <div className="w-40"><Label>{t('common.role')}</Label><select className="input" value={build.role} onChange={e => { setBuild({ ...build, role: e.target.value as any }); }}>
                 <option value="Caster/Range">Caster/Range</option><option value="Melee">Melee</option><option value="Tank">Tank</option><option value="Healer">Healer</option>
               </select></div>

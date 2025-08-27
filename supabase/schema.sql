@@ -1,4 +1,3 @@
--- Run in Supabase SQL editor
 create table if not exists public.profiles (
   id uuid primary key references auth.users on delete cascade,
   username text unique,
@@ -20,9 +19,11 @@ create table if not exists public.builds (
   tier_order jsonb not null default '[]',
   is_public boolean not null default true,
   comments_enabled boolean not null default false,
+  description text, -- NEW
   likes int not null default 0,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  constraint description_len check (description is null or char_length(description) <= 1000) -- NEW
 );
 alter table public.builds enable row level security;
 create policy "builds readable public or owner" on public.builds for select using (is_public or owner = auth.uid());
@@ -54,7 +55,7 @@ create table if not exists public.build_enchants (
   name text not null,
   rarity text not null,
   slot text not null,
-  tags text[] not null default '{}',
+  -- tags text[] not null default '{}',  -- REMOVED
   cost int,
   notes text,
   href text

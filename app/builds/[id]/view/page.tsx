@@ -54,6 +54,10 @@ export default function ViewBuild() {
 
       <Card><div className="flex flex-wrap items-center gap-2">{build.tiers.map(ti => (<button key={ti} className={"badge " + (tier === ti ? "border-blue-500" : "")} onClick={() => setTier(ti)}>{ti}</button>))}</div></Card>
 
+      {build.description && (
+        <Card><p className="whitespace-pre-wrap text-sm">{build.description}</p></Card>
+      )}
+
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">BiS — {tier}</h2>
         <div className="grid md:grid-cols-2 gap-3">

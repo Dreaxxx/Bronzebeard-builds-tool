@@ -30,7 +30,6 @@ export default function EnchantEditor({ build }: { build: Build }) {
             <Button onClick={() => { const div = document.getElementById('ench-search'); if (div) div.scrollIntoView({ behavior: 'smooth' }); }}>🔎</Button>
           </div>
         </div>
-        <p className="text-xs text-neutral-500 mt-2">Adjust quotas if needed (Ascension rules).</p>
       </Card>
 
       <div id="ench-search">
@@ -47,12 +46,20 @@ export default function EnchantEditor({ build }: { build: Build }) {
               <Input value={en.name} onChange={e => save({ ...en, name: e.target.value })} />
               <Select value={en.rarity} onChange={e => save({ ...en, rarity: e.target.value as any })}>{RARITIES.map(r => (<option key={r} value={r}>{r}</option>))}</Select>
               <Input readOnly placeholder="Slot (Mystic/Chest/...)" value={en.slot} onChange={e => save({ ...en, slot: e.target.value })} />
-              <Input placeholder="Cost" type="number" value={en.cost ?? 0} onChange={e => save({ ...en, cost: Number(e.target.value) })} />
-              <Button onClick={() => del(en.id)}>Delete</Button>
             </Row>
-            <Row><Input placeholder="Tags (comma separated)" value={en.tags.join(",")} onChange={e => save({ ...en, tags: e.target.value.split(',').map(s => s.trim()).filter(Boolean) })} /></Row>
+            <Row>
+              <Input
+                placeholder="Ascension DB URL (https://db.ascension.gg/...?spell=...)"
+                value={en.href ?? ""}
+                onChange={e => save({ ...en, href: e.target.value || null })}
+              />
+              {en.href && <a className="btn" href={en.href} target="_blank" rel="noreferrer">Open</a>}
+            </Row>
             <Row><Textarea placeholder="Notes" value={en.notes ?? ""} onChange={e => save({ ...en, notes: e.target.value })} /></Row>
             {en.href && <a className="text-xs underline" href={en.href} target="_blank" rel="noreferrer">Ascension DB</a>}
+            <Row>
+              <Button onClick={() => del(en.id)}>Delete</Button>
+            </Row>
           </Card>
         ))}
         {enchants.length === 0 && <p className="text-sm text-neutral-500">—</p>}

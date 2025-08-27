@@ -58,8 +58,6 @@ export default function SearchDrawer({ kind, onPick, slotSuggestion }: { kind: '
                 <option value="Legendary">Legendary</option>
               </select>
               <input className="input" placeholder="Slot contains… (ex: Head)" value={slot} onChange={e => setSlot(e.target.value)} />
-              <input className="input" placeholder="ilvl min" inputMode="numeric" value={ilvlMin} onChange={e => setIlvlMin(e.target.value)} />
-              <input className="input" placeholder="ilvl max" inputMode="numeric" value={ilvlMax} onChange={e => setIlvlMax(e.target.value)} />
             </div>
           )}
         </div>

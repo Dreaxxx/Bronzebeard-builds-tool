@@ -17,6 +17,7 @@ export type Build = {
   likes: number;
   isPublic: boolean;
   commentsEnabled: boolean;
+  description?: string | null;
 };
 
 export type BuildItem = {
@@ -29,7 +30,7 @@ export type BuildItem = {
   stats?: Record<string, number>;
   source?: string;
   notes?: string;
-  href?: string;
+  href?: string | null;
 };
 
 export type Rarity = "Rare" | "Epic" | "Legendary" | "Artifact";
@@ -39,10 +40,9 @@ export type Enchant = {
   name: string;
   rarity: Rarity;
   slot: string;
-  tags: string[];
   cost?: number;
   notes?: string;
-  href?: string;
+  href?: string | null;
 };
 
 export type Comment = {

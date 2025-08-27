@@ -1,7 +1,7 @@
 # BronzeBeard Builds Tool — v0.0.8
 
 - i18n (EN default + ES/FR/DE/RU/ZH/SV), auto-detection on first load, persisted.
-- Ascension DB search (items & enchants) with **advanced filters** (quality, slot text, ilvl min/max).
+- Ascension DB search (items & enchants) with **advanced filters** (quality, slot text).
 - Local-first (IndexedDB/Dexie). Optional cloud sync (Supabase).
 
 ## Dev

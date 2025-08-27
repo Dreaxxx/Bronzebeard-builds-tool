@@ -50,6 +50,16 @@ export default function TierEditor({ build }: { build: Build }) {
                     <Input placeholder="Source (dungeon/raid/worldforged/craft)" value={it.source ?? ""} onChange={e => saveItem({ ...it, source: e.target.value })} />
                   </div>
                   <div className="flex items-center gap-2">
+                    <Input
+                      placeholder="Ascension DB URL (https://db.ascension.gg/...?item=...)"
+                      value={it.href ?? ""}
+                      onChange={e => saveItem({ ...it, href: e.target.value || null })}
+                    />
+                    {it.href && (
+                      <a className="btn" href={it.href} target="_blank" rel="noreferrer">Open</a>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
                     <Textarea placeholder='Notes or stats (ex: {"SP":52,"Haste":28})' value={it.notes ?? ""} onChange={e => saveItem({ ...it, notes: e.target.value })} />
                   </div>
                   {it.href && <a className="text-xs underline" href={it.href} target="_blank" rel="noreferrer">Ascension DB</a>}

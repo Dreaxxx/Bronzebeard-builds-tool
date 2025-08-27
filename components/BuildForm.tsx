@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { DEFAULT_TIERS, WOW_CLASSES } from "@/lib/models";
 import type { Build } from "@/lib/models";
-import { Button, Input, Label, Select, Card, Row, PrimaryButton } from "./ui";
+import { Button, Input, Label, Select, Card, Row, PrimaryButton, Textarea } from "./ui";
 import { useI18n } from "@/lib/i18n/store";
 
 type Props = { initial?: Partial<Build>; onSubmit: (data: Omit<Build, 'id' | 'createdAt' | 'updatedAt' | 'likes'>) => void | Promise<void>; };
@@ -16,13 +16,23 @@ export default function BuildForm({ initial, onSubmit }: Props) {
   const [tiersStr, setTiersStr] = useState((initial?.tiers ?? DEFAULT_TIERS).join(","));
   const [isPublic, setIsPublic] = useState((initial as any)?.isPublic ?? false);
   const [commentsEnabled, setCommentsEnabled] = useState((initial as any)?.commentsEnabled ?? false);
+  const [description, setDescription] = useState<string>(initial?.description ?? "");
 
   return (
     <Card>
       <div className="space-y-4">
         <div><Label>{t('common.title')}</Label><Input placeholder="Shadow DoT — BronzeBeard" value={title} onChange={e => setTitle(e.target.value)} /></div>
+        <div>
+          <Label>Short description (≤ 1000)</Label>
+          <Textarea
+            maxLength={1000}
+            placeholder="What is this build about? rotation, synergy, goals..."
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+          />
+          <p className="text-xs text-neutral-500 mt-1">{description.length}/1000</p>
+        </div>
         <Row>
-          <div className="grow"><Label>{t('common.realm')}</Label><Input placeholder="BronzeBeard / CoA" value={realm} onChange={e => setRealm(e.target.value)} /></div>
           <div className="w-48"><Label>{t('common.role')}</Label><Select value={role} onChange={e => setRole(e.target.value as any)}>
             <option value="Caster/Range">Caster/Range</option><option value="Melee">Melee</option><option value="Tank">Tank</option><option value="Healer">Healer</option>
           </Select></div>
@@ -45,8 +55,13 @@ export default function BuildForm({ initial, onSubmit }: Props) {
         <Row>
           <PrimaryButton onClick={() => {
             const tiers = tiersStr.split(",").map(s => s.trim()).filter(Boolean) as any;
-            onSubmit({ title, realm, role, classTag, tiers, isPublic, commentsEnabled: isPublic ? commentsEnabled : false });
-          }}>{t('common.save')}</PrimaryButton>
+            onSubmit({
+              title, realm, role, classTag, tiers,
+              isPublic, commentsEnabled: isPublic ? commentsEnabled : false,
+              description: description || null, // << NEW
+            });
+          }}>{t('common.save')}
+          </PrimaryButton>
           <Button onClick={() => { setTitle(""); }}>{t('common.reset')}</Button>
         </Row>
       </div>
