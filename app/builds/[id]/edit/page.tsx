@@ -13,11 +13,14 @@ import { useI18n } from "@/lib/i18n/store";
 type Tab = "bis" | "enchants" | "settings";
 
 export default function EditBuild() {
+
   const { t } = useI18n();
   const params = useParams<{ id: string }>();
   const [build, setBuild] = useState<Build | null>(null);
   const [tab, setTab] = useState<Tab>("bis");
+
   useEffect(()=>{ (async ()=> setBuild(await getBuild(params.id)))(); }, [params.id]);
+  
   if (!build) return <p>Loading…</p>;
 
   return (
