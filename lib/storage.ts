@@ -1,7 +1,7 @@
 "use client";
 import { db } from "./db";
 import { uid } from "./id";
-import type { Build, BuildItem, Enchant, Comment, Tier, Rarity } from "./models";
+import type { Build, BuildItem, Enchant, Comment, Tier, Rarity, Slot } from "./models";
 
 export async function createBuild(partial: Omit<Build, 'id' | 'createdAt' | 'updatedAt' | 'likes'>): Promise<Build> {
   const now = Date.now();
@@ -31,7 +31,7 @@ export async function listItems(buildId: string, tier?: Tier) {
   if (tier) return q.and(it => it.tier === tier).sortBy('rank');
   return q.sortBy('rank');
 }
-export async function upsertItem(it: Partial<BuildItem> & { buildId: string; slot: string; tier: Tier; name: string; }) {
+export async function upsertItem(it: Partial<BuildItem> & { buildId: string; slot: Slot; tier: Tier; name: string; }) {
   const id = (it as any).id ?? uid();
   const record = { rank: 1, ...it, id } as BuildItem;
   await db.items.put(record); return record;
