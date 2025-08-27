@@ -1,11 +1,11 @@
 "use client";
 import { db } from "./db";
 import { uid } from "./id";
-import type { Build, BuildItem, Enchant, Comment, Tier } from "./models";
+import type { Build, BuildItem, Enchant, Comment, Tier, Rarity } from "./models";
 
 export async function createBuild(partial: Omit<Build, 'id' | 'createdAt' | 'updatedAt' | 'likes'>): Promise<Build> {
   const now = Date.now();
-  const build: Build = { id: uid(), createdAt: now, updatedAt: now, likes: 0, isPublic: false, commentsEnabled: false, ...partial };
+  const build: Build = { id: uid(), createdAt: now, updatedAt: now, likes: 0, ...partial };
   await db.builds.add(build); return build;
 }
 export async function listBuilds(): Promise<Build[]> { return db.builds.orderBy('updatedAt').reverse().toArray(); }
@@ -40,7 +40,7 @@ export async function removeItem(id: string) { await db.items.delete(id); }
 
 export async function listEnchants(buildId: string) { return db.enchants.where('buildId').equals(buildId).toArray(); }
 
-export async function upsertEnchant(e: Partial<Enchant> & { buildId: string; name: string; rarity: any; slot: string; }) {
+export async function upsertEnchant(e: Partial<Enchant> & { buildId: string; name: string; rarity: Rarity; slot: string; }) {
   const id = (e as any).id ?? uid(); const record = { tags: [], ...e, id } as Enchant; await db.enchants.put(record); return record;
 }
 export async function removeEnchant(id: string) { await db.enchants.delete(id); }
