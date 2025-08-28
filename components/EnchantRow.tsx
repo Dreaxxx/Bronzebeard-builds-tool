@@ -4,7 +4,6 @@ import { colorForRarity, withAlpha } from "@/lib/rarity";
 
 import RarityTag from "./RarityTag";
 
-
 export type EnchantRowProps = {
   name: string;
   rarity?: Rarity;
