@@ -3,6 +3,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import CommentThread from "@/components/CommentThread";
+import EnchantRow from "@/components/EnchantRow";
 import { Card, Button, Pill } from "@/components/ui";
 
 import { useI18n } from "@/lib/i18n/store";
@@ -225,28 +226,15 @@ export default function ViewBuild() {
         <Card>
           <ul className="grid gap-2 md:grid-cols-2">
             {enchants.map((en) => (
-              <li key={en.id} className="text-sm">
-                <span className="badge mr-2">{en.rarity}</span>
-                <span className="font-medium">{en.name}</span>
-                {en.slot && <span className="text-neutral-500"> • {en.slot}</span>}
-                {typeof en.cost === "number" && (
-                  <span className="text-neutral-500"> • cost {en.cost}</span>
-                )}
-                {en.notes && <div className="text-xs text-neutral-500">{en.notes}</div>}
-                {en.href && (
-                  <div>
-                    <a
-                      className="text-xs underline"
-                      href={en.href}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Ascension DB
-                    </a>
-                  </div>
-                )}
-              </li>
+              <EnchantRow
+                key={en.id}
+                name={en.name}
+                rarity={en.rarity}
+                url={en.href || undefined}
+                notes={en.notes || undefined}
+              />
             ))}
+
             {enchants.length === 0 && (
               <li className="text-sm text-neutral-500">{t("empty.none")}</li>
             )}
