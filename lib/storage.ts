@@ -2,6 +2,7 @@
 import { db } from "./db";
 import { uid } from "./id";
 import type { Build, BuildItem, Enchant, Comment, Tier, Rarity, Slot } from "./models";
+import { deleteBuildInCloud } from "@/lib/remote";
 
 export async function createBuild(partial: Omit<Build, 'id' | 'createdAt' | 'updatedAt' | 'likes'>): Promise<Build> {
   const now = Date.now();
@@ -17,13 +18,22 @@ export async function getBuild(id: string): Promise<Build | null> {
 
 export async function updateBuild(id: string, patch: Partial<Build>) { await db.builds.update(id, { ...patch, updatedAt: Date.now() }); }
 
-export async function deleteBuild(id: string) {
-  await db.transaction('rw', db.items, db.enchants, db.comments, db.builds, async () => {
-    await db.items.where({ buildId: id }).delete();
-    await db.enchants.where({ buildId: id }).delete();
-    await db.comments.where({ buildId: id }).delete();
-    await db.builds.delete(id);
+export async function deleteBuildLocal(buildId: string) {
+  await db.transaction('rw', db.builds, db.items, db.enchants, async () => {
+    await db.items.where('buildId').equals(buildId).delete();
+    await db.enchants.where('buildId').equals(buildId).delete();
+    await db.builds.delete(buildId);
   });
+}
+
+export async function deleteBuildEverywhere(buildId: string, alsoCloud: boolean) {
+  let cloud = false;
+  if (alsoCloud) {
+    try { cloud = await deleteBuildInCloud(buildId); }
+    catch (e) { /* we don't care, UI will handle it */ }
+  }
+  await deleteBuildLocal(buildId);
+  return cloud;
 }
 
 export async function listItems(buildId: string, tier?: Tier) {

@@ -41,6 +41,7 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
     sb.from("build_enchants").select("*").eq("build_id", buildId),
   ]);
 
+
   const build: Build = {
     id: b.id,
     title: b.title,
@@ -81,4 +82,15 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
   }));
 
   return { build, items: mappedItems, enchants: mappedEnchants };
+}
+
+export async function deleteBuildInCloud(buildId: string): Promise<boolean> {
+  const sb = supabase(); if (!sb) throw new Error("Supabase not configured");
+  const { data: s } = await sb.auth.getSession();
+  if (!s.session) throw new Error("Sign in first");
+
+  // .select() to see if something was actually deleted
+  const { data, error } = await sb.from("builds").delete().eq("id", buildId).select("id");
+  if (error) throw error;
+  return Array.isArray(data) && data.length > 0;
 }
