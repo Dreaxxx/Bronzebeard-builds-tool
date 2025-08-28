@@ -1,9 +1,23 @@
 export type Tier = "Raid" | "M0" | "M+<10" | "M+10-14" | "M+15+";
 export type Slot =
-  | "Head" | "Neck" | "Shoulder" | "Back" | "Chest"
-  | "Wrist" | "Hands" | "Waist" | "Legs" | "Feet"
-  | "Ring1" | "Ring2" | "Trinket1" | "Trinket2"
-  | "Weapon" | "OffHand" | "Ranged" | "Tabard";
+  | "Head"
+  | "Neck"
+  | "Shoulder"
+  | "Back"
+  | "Chest"
+  | "Wrist"
+  | "Hands"
+  | "Waist"
+  | "Legs"
+  | "Feet"
+  | "Ring1"
+  | "Ring2"
+  | "Trinket1"
+  | "Trinket2"
+  | "Weapon"
+  | "OffHand"
+  | "Ranged"
+  | "Tabard";
 
 export type Role = "Caster/Range" | "Melee" | "Tank" | "Healer";
 
@@ -61,4 +75,15 @@ export type Comment = {
 };
 
 export const DEFAULT_TIERS: Tier[] = ["Raid", "M0", "M+<10", "M+10-14", "M+15+"];
-export const WOW_CLASSES = ["Warrior", "Paladin", "Hunter", "Rogue", "Priest", "Shaman", "Mage", "Warlock", "Druid", "Death Knight"];
+export const WOW_CLASSES = [
+  "Warrior",
+  "Paladin",
+  "Hunter",
+  "Rogue",
+  "Priest",
+  "Shaman",
+  "Mage",
+  "Warlock",
+  "Druid",
+  "Death Knight",
+];

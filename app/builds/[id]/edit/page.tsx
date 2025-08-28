@@ -1,29 +1,25 @@
 "use client";
 
+import { useRouter, useParams } from "next/navigation";
 import { useEffect, useState, useRef } from "react";
 
-import { useRouter } from "next/navigation";
-import { useParams } from "next/navigation";
-
-import type { Session } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabaseClient";
-
+import EnchantEditor from "@/components/EnchantEditor";
+import TierEditor from "@/components/TierEditor";
 import { Button, Card, Input, Label, Select, Textarea } from "@/components/ui";
 
-import TierEditor from "@/components/TierEditor";
-import EnchantEditor from "@/components/EnchantEditor";
-
-import type { Build } from "@/lib/models";
-import { getBuild, listEnchants, listItems, updateBuild } from "@/lib/storage";
-import { WOW_CLASSES } from "@/lib/models";
 import { useI18n } from "@/lib/i18n/store";
 import { exportBuildBundle, importBuildBundleFile, downloadBlob } from "@/lib/io";
+import { WOW_CLASSES } from "@/lib/models";
+import type { Build } from "@/lib/models";
 import { uploadBuild } from "@/lib/remote";
+import { getBuild, listEnchants, listItems, updateBuild } from "@/lib/storage";
+import { supabase } from "@/lib/supabaseClient";
+
+import type { Session } from "@supabase/supabase-js";
 
 type Tab = "bis" | "enchants" | "settings";
 
 export default function EditBuild() {
-
   const { t } = useI18n();
   const params = useParams<{ id: string }>();
   const [build, setBuild] = useState<Build | null>(null);
@@ -51,15 +47,25 @@ export default function EditBuild() {
     });
   }
 
-  useEffect(() => { (async () => setBuild(await getBuild(params.id)))(); }, [params.id]);
+  useEffect(() => {
+    (async () => setBuild(await getBuild(params.id)))();
+  }, [params.id]);
 
   if (!build) return <p>Loading…</p>;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div><div className="text-sm text-neutral-500">{build.realm} • {build.role}{build.classTag ? ` • ${build.classTag}` : ''}</div><h1 className="text-2xl font-bold">{build.title}</h1></div>
-        <a className="btn" href={`/builds/${build.id}/view`}>Public preview</a>
+        <div>
+          <div className="text-sm text-neutral-500">
+            {build.realm} • {build.role}
+            {build.classTag ? ` • ${build.classTag}` : ""}
+          </div>
+          <h1 className="text-2xl font-bold">{build.title}</h1>
+        </div>
+        <a className="btn" href={`/builds/${build.id}/view`}>
+          Public preview
+        </a>
       </div>
 
       <input
@@ -87,15 +93,32 @@ export default function EditBuild() {
         <Textarea
           maxLength={1000}
           value={build.description ?? ""}
-          onChange={e => { setBuild({ ...build, description: e.target.value }); }}
+          onChange={(e) => {
+            setBuild({ ...build, description: e.target.value });
+          }}
         />
-        <p className="text-xs text-neutral-500">{(build.description?.length ?? 0)}/1000</p>
+        <p className="text-xs text-neutral-500">{build.description?.length ?? 0}/1000</p>
       </div>
 
       <div className="flex gap-2">
-        <button className={"btn " + (tab === "bis" ? "btn-primary" : "")} onClick={() => setTab("bis")}>{t('build.tabs.bis')}</button>
-        <button className={"btn " + (tab === "enchants" ? "btn-primary" : "")} onClick={() => setTab("enchants")}>{t('build.tabs.enchants')}</button>
-        <button className={"btn " + (tab === "settings" ? "btn-primary" : "")} onClick={() => setTab("settings")}>{t('build.tabs.settings')}</button>
+        <button
+          className={"btn " + (tab === "bis" ? "btn-primary" : "")}
+          onClick={() => setTab("bis")}
+        >
+          {t("build.tabs.bis")}
+        </button>
+        <button
+          className={"btn " + (tab === "enchants" ? "btn-primary" : "")}
+          onClick={() => setTab("enchants")}
+        >
+          {t("build.tabs.enchants")}
+        </button>
+        <button
+          className={"btn " + (tab === "settings" ? "btn-primary" : "")}
+          onClick={() => setTab("settings")}
+        >
+          {t("build.tabs.settings")}
+        </button>
       </div>
 
       {tab === "bis" && <TierEditor build={build} />}
@@ -104,28 +127,101 @@ export default function EditBuild() {
         <Card>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="grow"><Label>{t('common.title')}</Label><Input value={build.title} onChange={e => { setBuild({ ...build, title: e.target.value }); }} /></div>
-              <div className="w-40"><Label>{t('common.role')}</Label><select className="input" value={build.role} onChange={e => { setBuild({ ...build, role: e.target.value as any }); }}>
-                <option value="Caster/Range">Caster/Range</option><option value="Melee">Melee</option><option value="Tank">Tank</option><option value="Healer">Healer</option>
-              </select></div>
-              <div className="w-48"><Label>{t('common.class')}</Label><Select value={build.classTag ?? ''} onChange={e => { setBuild({ ...build, classTag: e.target.value }); }}>
-                {WOW_CLASSES.map(c => (<option key={c} value={c}>{c}</option>))}
-              </Select></div>
+              <div className="grow">
+                <Label>{t("common.title")}</Label>
+                <Input
+                  value={build.title}
+                  onChange={(e) => {
+                    setBuild({ ...build, title: e.target.value });
+                  }}
+                />
+              </div>
+              <div className="w-40">
+                <Label>{t("common.role")}</Label>
+                <select
+                  className="input"
+                  value={build.role}
+                  onChange={(e) => {
+                    setBuild({ ...build, role: e.target.value as any });
+                  }}
+                >
+                  <option value="Caster/Range">Caster/Range</option>
+                  <option value="Melee">Melee</option>
+                  <option value="Tank">Tank</option>
+                  <option value="Healer">Healer</option>
+                </select>
+              </div>
+              <div className="w-48">
+                <Label>{t("common.class")}</Label>
+                <Select
+                  value={build.classTag ?? ""}
+                  onChange={(e) => {
+                    setBuild({ ...build, classTag: e.target.value });
+                  }}
+                >
+                  {WOW_CLASSES.map((c) => (
+                    <option key={c} value={c}>
+                      {c}
+                    </option>
+                  ))}
+                </Select>
+              </div>
             </div>
-            <div><Label>{t('build.settings.order')}</Label><Input value={build.tiers.join(",")} onChange={e => setBuild({ ...build, tiers: e.target.value.split(',').map(s => s.trim()).filter(Boolean) as any })} /></div>
+            <div>
+              <Label>{t("build.settings.order")}</Label>
+              <Input
+                value={build.tiers.join(",")}
+                onChange={(e) =>
+                  setBuild({
+                    ...build,
+                    tiers: e.target.value
+                      .split(",")
+                      .map((s) => s.trim())
+                      .filter(Boolean) as any,
+                  })
+                }
+              />
+            </div>
             <div className="space-y-2">
-              <label className="flex items-center gap-2"><input type="checkbox" checked={build.isPublic} onChange={e => { setBuild({ ...build, isPublic: e.target.checked }); }} /><span>{t('common.public')}?</span></label>
-              <label className="flex items-center gap-2"><input type="checkbox" disabled={!build.isPublic} checked={build.commentsEnabled} onChange={e => { setBuild({ ...build, commentsEnabled: e.target.checked }); }} /><span>{t('form.enableComments')}</span></label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={build.isPublic}
+                  onChange={(e) => {
+                    setBuild({ ...build, isPublic: e.target.checked });
+                  }}
+                />
+                <span>{t("common.public")}?</span>
+              </label>
+              <label className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  disabled={!build.isPublic}
+                  checked={build.commentsEnabled}
+                  onChange={(e) => {
+                    setBuild({ ...build, commentsEnabled: e.target.checked });
+                  }}
+                />
+                <span>{t("form.enableComments")}</span>
+              </label>
             </div>
             <div className="flex items-center gap-3">
-              <Button className="bg-green-600 hover:bg-green-300" onClick={async () => { await updateBuild(build.id, build); alert("Saved."); }}>{t('common.save')}</Button>
+              <Button
+                className="bg-green-600 hover:bg-green-300"
+                onClick={async () => {
+                  await updateBuild(build.id, build);
+                  alert("Saved.");
+                }}
+              >
+                {t("common.save")}
+              </Button>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2 mt-4">
+          <div className="mt-4 flex flex-wrap gap-2">
             {/* Export JSON — always visible */}
             <button
-              className="px-3 py-1.5 rounded bg-orange-600 hover:bg-orange-300"
+              className="rounded bg-orange-600 px-3 py-1.5 hover:bg-orange-300"
               onClick={async () => {
                 if (!build) return;
                 const blob = await exportBuildBundle(build.id);
@@ -138,7 +234,7 @@ export default function EditBuild() {
 
             {/* Import JSON — always visible */}
             <button
-              className="px-3 py-1.5 rounded bg-orange-600 hover:bg-orange-300"
+              className="rounded bg-orange-600 px-3 py-1.5 hover:bg-orange-300"
               onClick={() => fileRef.current?.click()}
             >
               Import JSON
@@ -147,7 +243,7 @@ export default function EditBuild() {
             {/* Sync cloud — only visible if logged in */}
             {session ? (
               <button
-                className="px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700"
+                className="rounded bg-blue-600 px-3 py-1.5 text-white hover:bg-blue-700"
                 onClick={async () => {
                   try {
                     setSyncing(true);
@@ -175,7 +271,7 @@ export default function EditBuild() {
                 <p>Sign in with Discord to upload your build to the cloud.</p>
                 <button
                   onClick={signInDiscord}
-                  className="mt-2 px-3 py-1.5 rounded bg-red-600 text-white hover:bg-red-700"
+                  className="mt-2 rounded bg-red-600 px-3 py-1.5 text-white hover:bg-red-700"
                 >
                   Sign in with Discord
                 </button>

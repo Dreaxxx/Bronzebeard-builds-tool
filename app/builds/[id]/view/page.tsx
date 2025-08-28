@@ -1,13 +1,22 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { getBuild, listItems, listEnchants, likeLocal, markBuildSavedLocally, unmarkBuildSavedLocally } from "@/lib/storage";
-import type { Build, Tier } from "@/lib/models";
-import { Card, Button, Pill } from "@/components/ui";
-import { SLOTS } from "@/lib/slots";
+import { useEffect, useMemo, useState } from "react";
+
 import CommentThread from "@/components/CommentThread";
-import { likePublicBuild, fetchBuildBundleFromCloud, putBuildDeep } from "@/lib/remote";
+import { Card, Button, Pill } from "@/components/ui";
+
 import { useI18n } from "@/lib/i18n/store";
+import type { Build, Tier } from "@/lib/models";
+import { likePublicBuild, fetchBuildBundleFromCloud, putBuildDeep } from "@/lib/remote";
+import { SLOTS } from "@/lib/slots";
+import {
+  getBuild,
+  listItems,
+  listEnchants,
+  likeLocal,
+  markBuildSavedLocally,
+  unmarkBuildSavedLocally,
+} from "@/lib/storage";
 
 export default function ViewBuild() {
   const { t } = useI18n();
@@ -24,13 +33,19 @@ export default function ViewBuild() {
 
   useEffect(() => {
     (async () => {
-      const b = await getBuild(params.id); if (b) { setBuild(b); setTier(b.tiers[0]); }
+      const b = await getBuild(params.id);
+      if (b) {
+        setBuild(b);
+        setTier(b.tiers[0]);
+      }
     })();
   }, [params.id]);
 
   useEffect(() => {
     (async () => {
-      if (!build || !tier) return; setItems(await listItems(build.id, tier)); setEnchants(await listEnchants(build.id));
+      if (!build || !tier) return;
+      setItems(await listItems(build.id, tier));
+      setEnchants(await listEnchants(build.id));
     })();
   }, [build, tier]);
 
@@ -38,22 +53,36 @@ export default function ViewBuild() {
     let cancelled = false;
     (async () => {
       setError(null);
-      let b = await getBuild(params.id);
-      if (!cancelled && b) { setBuild(b); return; }
+      const b = await getBuild(params.id);
+      if (!cancelled && b) {
+        setBuild(b);
+        return;
+      }
 
       try {
         const bundle = await fetchBuildBundleFromCloud(params.id);
-        if (!bundle) { if (!cancelled) setError("Build not found or not public."); return; }
+        if (!bundle) {
+          if (!cancelled) setError("Build not found or not public.");
+          return;
+        }
         await putBuildDeep(bundle); // hydrate local pour les sous-composants
         if (!cancelled) setBuild(bundle.build);
       } catch (e: any) {
         if (!cancelled) setError(e.message || String(e));
       }
     })();
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [params.id]);
 
-  const itemsBySlot = useMemo(() => { const m: Record<string, any[]> = {}; (SLOTS as any).forEach((s: string) => m[s] = []); for (const it of items) (m[it.slot] || []).push(it); Object.keys(m).forEach(s => m[s].sort((a, b) => a.rank - b.rank)); return m; }, [items]);
+  const itemsBySlot = useMemo(() => {
+    const m: Record<string, any[]> = {};
+    (SLOTS as any).forEach((s: string) => (m[s] = []));
+    for (const it of items) (m[it.slot] || []).push(it);
+    Object.keys(m).forEach((s) => m[s].sort((a, b) => a.rank - b.rank));
+    return m;
+  }, [items]);
 
   if (error) return <p className="text-red-600">{error}</p>;
   if (!build) return <p>Loading…</p>;
@@ -65,7 +94,9 @@ export default function ViewBuild() {
     try {
       setLiking(true);
       await likeLocal(b.id);
-      try { await likePublicBuild(b.id); } catch { }
+      try {
+        await likePublicBuild(b.id);
+      } catch {}
       const updated = await getBuild(b.id);
       if (updated) setBuild(updated);
     } catch (e: any) {
@@ -80,7 +111,9 @@ export default function ViewBuild() {
       setSaving(true);
       await markBuildSavedLocally(build!.id);
       setBuild({ ...build!, savedLocal: true, savedAt: Date.now() });
-    } finally { setSaving(false); }
+    } finally {
+      setSaving(false);
+    }
   }
   async function removeSaved() {
     if (!confirm("Remove from saved?")) return;
@@ -91,13 +124,19 @@ export default function ViewBuild() {
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between">
-        <div><div className="text-sm text-neutral-500">{build.realm} • {build.role}{build.classTag ? ` • ${build.classTag}` : ''}</div><h1 className="text-2xl font-bold">{build.title}</h1></div>
+        <div>
+          <div className="text-sm text-neutral-500">
+            {build.realm} • {build.role}
+            {build.classTag ? ` • ${build.classTag}` : ""}
+          </div>
+          <h1 className="text-2xl font-bold">{build.title}</h1>
+        </div>
         <div className="flex gap-2">
           {!build.savedLocal ? (
             <button
               onClick={saveLocal}
               disabled={saving}
-              className="px-3 py-1.5 rounded bg-emerald-600 text-white hover:bg-emerald-700"
+              className="rounded bg-emerald-600 px-3 py-1.5 text-white hover:bg-emerald-700"
               title="Save this build locally"
             >
               {saving ? "Saving…" : "Save locally"}
@@ -105,7 +144,7 @@ export default function ViewBuild() {
           ) : (
             <button
               onClick={removeSaved}
-              className="px-3 py-1.5 rounded bg-orange-500 hover:bg-orange-600"
+              className="rounded bg-orange-500 px-3 py-1.5 hover:bg-orange-600"
               title="Remove from saved"
             >
               Saved ✓ (remove)
@@ -114,34 +153,67 @@ export default function ViewBuild() {
         </div>
         <div className="flex items-center gap-2">
           <Pill>❤️ {build.likes || 0}</Pill>
-          {build.isPublic && <Button disabled={liking} onClick={like}>{t('like.add')}</Button>}
-          <a className="btn" href={`/builds/${build.id}/edit`}>{t('common.edit')}</a>
+          {build.isPublic && (
+            <Button disabled={liking} onClick={like}>
+              {t("like.add")}
+            </Button>
+          )}
+          <a className="btn" href={`/builds/${build.id}/edit`}>
+            {t("common.edit")}
+          </a>
         </div>
       </header>
 
-      <Card><div className="flex flex-wrap items-center gap-2">{build.tiers.map(ti => (<button key={ti} className={"badge " + (tier === ti ? "border-blue-500" : "")} onClick={() => setTier(ti)}>{ti}</button>))}</div></Card>
+      <Card>
+        <div className="flex flex-wrap items-center gap-2">
+          {build.tiers.map((ti) => (
+            <button
+              key={ti}
+              className={"badge " + (tier === ti ? "border-blue-500" : "")}
+              onClick={() => setTier(ti)}
+            >
+              {ti}
+            </button>
+          ))}
+        </div>
+      </Card>
 
       {build.description && (
-        <Card><p className="whitespace-pre-wrap text-sm">{build.description}</p></Card>
+        <Card>
+          <p className="whitespace-pre-wrap text-sm">{build.description}</p>
+        </Card>
       )}
 
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">BiS — {tier}</h2>
-        <div className="grid md:grid-cols-2 gap-3">
+        <div className="grid gap-3 md:grid-cols-2">
           {(SLOTS as any).map((slot: string) => (
             <Card key={slot}>
               <h3 className="font-semibold">{slot}</h3>
               <ul className="mt-2 space-y-1">
-                {(itemsBySlot[slot] || []).map(it => (
+                {(itemsBySlot[slot] || []).map((it) => (
                   <li key={it.id} className="text-sm">
                     <span className="badge mr-2">{it.rank === 1 ? "BiS" : `Alt ${it.rank}`}</span>
                     <span className="font-medium">{it.name}</span>
                     {it.source && <span className="text-neutral-500"> — {it.source}</span>}
                     {it.notes && <div className="text-xs text-neutral-500">{it.notes}</div>}
-                    {it.href && <div><a className="text-xs underline" href={it.href} target="_blank" rel="noreferrer">Ascension DB</a></div>}
+                    {it.href && (
+                      <div>
+                        <a
+                          className="text-xs underline"
+                          href={it.href}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Ascension DB
+                        </a>
+                      </div>
+                    )}
                   </li>
                 ))}
-                {(itemsBySlot[slot] || []).length === 0 && <li className="text-sm text-neutral-500">{t('empty.none')}</li>}
+                {(itemsBySlot[slot] || []).length === 0 && (
+                  <li className="text-sm text-neutral-500">{t("empty.none")}</li>
+                )}
               </ul>
             </Card>
           ))}
@@ -151,26 +223,47 @@ export default function ViewBuild() {
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">Mystic Enchants</h2>
         <Card>
-          <ul className="grid md:grid-cols-2 gap-2">
-            {enchants.map(en => (
+          <ul className="grid gap-2 md:grid-cols-2">
+            {enchants.map((en) => (
               <li key={en.id} className="text-sm">
                 <span className="badge mr-2">{en.rarity}</span>
                 <span className="font-medium">{en.name}</span>
                 {en.slot && <span className="text-neutral-500"> • {en.slot}</span>}
-                {en.tags?.length > 0 && <span className="text-neutral-500"> • {en.tags.join(", ")}</span>}
-                {typeof en.cost === "number" && <span className="text-neutral-500"> • cost {en.cost}</span>}
+                {en.tags?.length > 0 && (
+                  <span className="text-neutral-500"> • {en.tags.join(", ")}</span>
+                )}
+                {typeof en.cost === "number" && (
+                  <span className="text-neutral-500"> • cost {en.cost}</span>
+                )}
                 {en.notes && <div className="text-xs text-neutral-500">{en.notes}</div>}
-                {en.href && <div><a className="text-xs underline" href={en.href} target="_blank" rel="noreferrer">Ascension DB</a></div>}
+                {en.href && (
+                  <div>
+                    <a
+                      className="text-xs underline"
+                      href={en.href}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      Ascension DB
+                    </a>
+                  </div>
+                )}
               </li>
             ))}
-            {enchants.length === 0 && <li className="text-sm text-neutral-500">{t('empty.none')}</li>}
+            {enchants.length === 0 && (
+              <li className="text-sm text-neutral-500">{t("empty.none")}</li>
+            )}
           </ul>
         </Card>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">{t('build.comments')}</h2>
-        {build.isPublic && build.commentsEnabled ? (<CommentThread build={build} />) : (<div className="text-sm text-neutral-500">{t('build.comments.disabled')}</div>)}
+        <h2 className="text-xl font-semibold">{t("build.comments")}</h2>
+        {build.isPublic && build.commentsEnabled ? (
+          <CommentThread build={build} />
+        ) : (
+          <div className="text-sm text-neutral-500">{t("build.comments.disabled")}</div>
+        )}
       </section>
     </div>
   );

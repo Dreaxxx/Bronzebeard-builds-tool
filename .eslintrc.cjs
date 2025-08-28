@@ -1,0 +1,50 @@
+module.exports = {
+  root: true,
+  parser: "@typescript-eslint/parser",
+  plugins: ["@typescript-eslint", "import", "unused-imports"],
+  extends: [
+    "next/core-web-vitals",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/recommended",
+    "plugin:import/typescript",
+    "eslint-config-prettier",
+  ],
+  settings: { "import/resolver": { typescript: { project: ".", alwaysTryTypes: true } } },
+  rules: {
+    "unused-imports/no-unused-imports": "error",
+    "unused-imports/no-unused-vars": ["warn", { varsIgnorePattern: "^_", argsIgnorePattern: "^_" }],
+    "import/order": [
+      "warn",
+      {
+        groups: [
+          "builtin",
+          "external",
+          "internal",
+          ["parent", "sibling", "index"],
+          "object",
+          "type",
+        ],
+        "newlines-between": "always",
+        alphabetize: { order: "asc", caseInsensitive: true },
+        pathGroups: [
+          { pattern: "@/components/**", group: "internal", position: "before" },
+          { pattern: "@/lib/**", group: "internal", position: "before" },
+        ],
+        pathGroupsExcludedImportTypes: ["builtin"],
+      },
+    ],
+    "@typescript-eslint/consistent-type-imports": ["warn", { prefer: "type-imports" }],
+    "@typescript-eslint/no-explicit-any": "off",
+    "@next/next/no-img-element": "off",
+  },
+  ignorePatterns: [
+    "node_modules/",
+    ".next/",
+    ".vercel/",
+    "dist/",
+    "out/",
+    "coverage/",
+    "public/",
+    "supabase/.temp/**",
+  ],
+};

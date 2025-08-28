@@ -1,6 +1,8 @@
 "use client";
-import Dexie, { Table } from "dexie";
+import Dexie from "dexie";
+
 import type { Build, BuildItem, Enchant, Comment } from "./models";
+import type { Table } from "dexie";
 
 export class BBRDatabase extends Dexie {
   builds!: Table<Build, string>;
