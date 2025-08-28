@@ -58,11 +58,11 @@ export default function BuildForm({ initial, onSubmit }: Props) {
             onSubmit({
               title, realm, role, classTag, tiers,
               isPublic, commentsEnabled: isPublic ? commentsEnabled : false,
-              description: description || null, // << NEW
+              description: description || null,
             });
           }}>{t('common.save')}
           </PrimaryButton>
-          <Button onClick={() => { setTitle(""); }}>{t('common.reset')}</Button>
+          <Button className="bg-red-500 hover:bg-red-600" onClick={() => { setTitle(""); }}>{t('common.reset')}</Button>
         </Row>
       </div>
     </Card>

@@ -20,6 +20,10 @@ export type Build = {
   isPublic: boolean;
   commentsEnabled: boolean;
   description?: string | null;
+  ownerId?: string | null;
+  origin?: "local" | "cloud";
+  savedLocal?: boolean;
+  savedAt?: number | null;
 };
 
 export type BuildItem = {

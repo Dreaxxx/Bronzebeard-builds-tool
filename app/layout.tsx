@@ -5,7 +5,7 @@ import LangSwitcher from "@/components/LangSwitcher";
 import LanguageInit from "@/components/LanguageInit";
 
 export const metadata: Metadata = {
-  title: "BronzeBeard Builds Manager v0.0.8",
+  title: "BronzeBeard Builds Manager v0.8.3",
   description: "i18n + Ascension DB search + filters",
   manifest: "/manifest.json",
 };

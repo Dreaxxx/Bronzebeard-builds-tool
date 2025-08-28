@@ -1,6 +1,7 @@
 "use client";
 import type { Build, BuildItem, Enchant } from "./models";
 import { supabase } from "./supabaseClient";
+import { db } from "@/lib/db";
 
 export async function authGetUser() { const sb = supabase(); if (!sb) return null; const { data } = await sb.auth.getUser(); return data.user ?? null; }
 export async function signInDiscord() { const sb = supabase(); if (!sb) throw new Error("Supabase not configured"); const { error } = await sb.auth.signInWithOAuth({ provider: "discord", options: { redirectTo: window.location.origin } }); if (error) throw error; }
@@ -55,6 +56,8 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
     likes: b.likes ?? 0,
     createdAt: Date.parse(b.created_at),
     updatedAt: Date.parse(b.updated_at),
+    ownerId: b.owner ?? null,
+    origin: "cloud",
   };
 
   const mappedItems: BuildItem[] = items!.map((it: any) => ({
@@ -82,6 +85,23 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
   }));
 
   return { build, items: mappedItems, enchants: mappedEnchants };
+}
+
+export async function putBuildDeep(bundle: { build: Build; items: BuildItem[]; enchants: Enchant[] }) {
+  const { build, items, enchants } = bundle;
+  await db.transaction("rw", db.builds, db.items, db.enchants, async () => {
+    const prev = await db.builds.get(build.id);
+    const merged: Build = {
+      ...build,
+      savedLocal: prev?.savedLocal ?? false,
+      savedAt: prev?.savedAt ?? null,
+    };
+    await db.builds.put(merged);
+    await db.items.where("buildId").equals(build.id).delete();
+    await db.enchants.where("buildId").equals(build.id).delete();
+    if (items.length) await db.items.bulkPut(items);
+    if (enchants.length) await db.enchants.bulkPut(enchants);
+  });
 }
 
 export async function deleteBuildInCloud(buildId: string): Promise<boolean> {

@@ -118,14 +118,14 @@ export default function EditBuild() {
               <label className="flex items-center gap-2"><input type="checkbox" disabled={!build.isPublic} checked={build.commentsEnabled} onChange={e => { setBuild({ ...build, commentsEnabled: e.target.checked }); }} /><span>{t('form.enableComments')}</span></label>
             </div>
             <div className="flex items-center gap-3">
-              <Button onClick={async () => { await updateBuild(build.id, build); alert("Saved."); }}>{t('common.save')}</Button>
+              <Button className="bg-green-600 hover:bg-green-300" onClick={async () => { await updateBuild(build.id, build); alert("Saved."); }}>{t('common.save')}</Button>
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 mt-4">
             {/* Export JSON — always visible */}
             <button
-              className="px-3 py-1.5 rounded bg-neutral-200 hover:bg-neutral-300"
+              className="px-3 py-1.5 rounded bg-orange-600 hover:bg-orange-300"
               onClick={async () => {
                 if (!build) return;
                 const blob = await exportBuildBundle(build.id);
@@ -138,7 +138,7 @@ export default function EditBuild() {
 
             {/* Import JSON — always visible */}
             <button
-              className="px-3 py-1.5 rounded bg-neutral-200 hover:bg-neutral-300"
+              className="px-3 py-1.5 rounded bg-orange-600 hover:bg-orange-300"
               onClick={() => fileRef.current?.click()}
             >
               Import JSON

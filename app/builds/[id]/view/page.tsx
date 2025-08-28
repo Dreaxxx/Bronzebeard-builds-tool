@@ -1,26 +1,38 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { getBuild, listItems, listEnchants, likeLocal, putBuildDeep } from "@/lib/storage";
+import { getBuild, listItems, listEnchants, likeLocal, markBuildSavedLocally, unmarkBuildSavedLocally } from "@/lib/storage";
 import type { Build, Tier } from "@/lib/models";
 import { Card, Button, Pill } from "@/components/ui";
 import { SLOTS } from "@/lib/slots";
 import CommentThread from "@/components/CommentThread";
-import { likePublicBuild, fetchBuildBundleFromCloud } from "@/lib/remote";
+import { likePublicBuild, fetchBuildBundleFromCloud, putBuildDeep } from "@/lib/remote";
 import { useI18n } from "@/lib/i18n/store";
 
 export default function ViewBuild() {
   const { t } = useI18n();
+
   const params = useParams<{ id: string }>();
+
   const [build, setBuild] = useState<Build | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tier, setTier] = useState<Tier | null>(null);
   const [items, setItems] = useState<any[]>([]);
   const [enchants, setEnchants] = useState<any[]>([]);
   const [liking, setLiking] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  useEffect(() => { (async () => { const b = await getBuild(params.id); if (b) { setBuild(b); setTier(b.tiers[0]); } })(); }, [params.id]);
-  useEffect(() => { (async () => { if (!build || !tier) return; setItems(await listItems(build.id, tier)); setEnchants(await listEnchants(build.id)); })(); }, [build, tier]);
+  useEffect(() => {
+    (async () => {
+      const b = await getBuild(params.id); if (b) { setBuild(b); setTier(b.tiers[0]); }
+    })();
+  }, [params.id]);
+
+  useEffect(() => {
+    (async () => {
+      if (!build || !tier) return; setItems(await listItems(build.id, tier)); setEnchants(await listEnchants(build.id));
+    })();
+  }, [build, tier]);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,10 +75,43 @@ export default function ViewBuild() {
     }
   }
 
+  async function saveLocal() {
+    try {
+      setSaving(true);
+      await markBuildSavedLocally(build!.id);
+      setBuild({ ...build!, savedLocal: true, savedAt: Date.now() });
+    } finally { setSaving(false); }
+  }
+  async function removeSaved() {
+    if (!confirm("Remove from saved?")) return;
+    await unmarkBuildSavedLocally(build!.id);
+    setBuild({ ...build!, savedLocal: false, savedAt: null });
+  }
+
   return (
     <div className="space-y-6">
       <header className="flex items-center justify-between">
         <div><div className="text-sm text-neutral-500">{build.realm} • {build.role}{build.classTag ? ` • ${build.classTag}` : ''}</div><h1 className="text-2xl font-bold">{build.title}</h1></div>
+        <div className="flex gap-2">
+          {!build.savedLocal ? (
+            <button
+              onClick={saveLocal}
+              disabled={saving}
+              className="px-3 py-1.5 rounded bg-emerald-600 text-white hover:bg-emerald-700"
+              title="Save this build locally"
+            >
+              {saving ? "Saving…" : "Save locally"}
+            </button>
+          ) : (
+            <button
+              onClick={removeSaved}
+              className="px-3 py-1.5 rounded bg-orange-500 hover:bg-orange-600"
+              title="Remove from saved"
+            >
+              Saved ✓ (remove)
+            </button>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           <Pill>❤️ {build.likes || 0}</Pill>
           {build.isPublic && <Button disabled={liking} onClick={like}>{t('like.add')}</Button>}
