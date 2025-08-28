@@ -1,15 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+
+import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import type { Build } from "@/lib/models";
-import { getBuild, updateBuild } from "@/lib/storage";
+
+import type { Session } from "@supabase/supabase-js";
+import { supabase } from "@/lib/supabaseClient";
+
 import { Button, Card, Input, Label, Select, Textarea } from "@/components/ui";
+
 import TierEditor from "@/components/TierEditor";
 import EnchantEditor from "@/components/EnchantEditor";
-import SyncButtons from "@/components/SyncButtons";
+
+import type { Build } from "@/lib/models";
+import { getBuild, listEnchants, listItems, updateBuild } from "@/lib/storage";
 import { WOW_CLASSES } from "@/lib/models";
 import { useI18n } from "@/lib/i18n/store";
+import { exportBuildBundle, importBuildBundleFile, downloadBlob } from "@/lib/io";
+import { uploadBuild } from "@/lib/remote";
 
 type Tab = "bis" | "enchants" | "settings";
 
@@ -19,6 +28,28 @@ export default function EditBuild() {
   const params = useParams<{ id: string }>();
   const [build, setBuild] = useState<Build | null>(null);
   const [tab, setTab] = useState<Tab>("bis");
+
+  const [syncing, setSyncing] = useState(false);
+
+  const [session, setSession] = useState<Session | null>(null);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const sb = supabase();
+    if (!sb) return;
+    sb.auth.getSession().then(({ data }) => setSession(data.session ?? null));
+    const { data: sub } = sb.auth.onAuthStateChange((_e, s) => setSession(s));
+    return () => sub?.subscription?.unsubscribe();
+  }, []);
+
+  async function signInDiscord() {
+    const sb = supabase()!;
+    await sb.auth.signInWithOAuth({
+      provider: "discord",
+      options: { redirectTo: window.location.origin },
+    });
+  }
 
   useEffect(() => { (async () => setBuild(await getBuild(params.id)))(); }, [params.id]);
 
@@ -30,6 +61,26 @@ export default function EditBuild() {
         <div><div className="text-sm text-neutral-500">{build.realm} • {build.role}{build.classTag ? ` • ${build.classTag}` : ''}</div><h1 className="text-2xl font-bold">{build.title}</h1></div>
         <a className="btn" href={`/builds/${build.id}/view`}>Public preview</a>
       </div>
+
+      <input
+        ref={fileRef}
+        type="file"
+        accept="application/json"
+        className="hidden"
+        onChange={async (e) => {
+          const file = e.target.files?.[0];
+          if (!file || !build) return;
+          try {
+            const newId = await importBuildBundleFile(file);
+            alert("Build imported locally.");
+            router.push(`/builds/${newId}/edit`);
+          } catch (err: any) {
+            alert(err.message || String(err));
+          } finally {
+            e.currentTarget.value = "";
+          }
+        }}
+      />
 
       <div>
         <Label>Description (≤ 1000)</Label>
@@ -69,12 +120,67 @@ export default function EditBuild() {
             <div className="flex items-center gap-3">
               <Button onClick={async () => { await updateBuild(build.id, build); alert("Saved."); }}>{t('common.save')}</Button>
             </div>
+          </div>
 
-            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800">
-              <h3 className="font-semibold mb-2">Cloud sync</h3>
-              <p className="text-sm text-neutral-500 mb-2">Sign in with Discord.</p>
-              <SyncButtons build={build} />
-            </div>
+          <div className="flex flex-wrap gap-2">
+            {/* Export JSON — always visible */}
+            <button
+              className="px-3 py-1.5 rounded bg-neutral-200 hover:bg-neutral-300"
+              onClick={async () => {
+                if (!build) return;
+                const blob = await exportBuildBundle(build.id);
+                const safe = build.title.replace(/[^\w\-]+/g, "-").slice(0, 60);
+                downloadBlob(blob, `${safe || "build"}.json`);
+              }}
+            >
+              Export JSON
+            </button>
+
+            {/* Import JSON — always visible */}
+            <button
+              className="px-3 py-1.5 rounded bg-neutral-200 hover:bg-neutral-300"
+              onClick={() => fileRef.current?.click()}
+            >
+              Import JSON
+            </button>
+
+            {/* Sync cloud — only visible if logged in */}
+            {session ? (
+              <button
+                className="px-3 py-1.5 rounded bg-blue-600 text-white hover:bg-blue-700"
+                onClick={async () => {
+                  try {
+                    setSyncing(true);
+                    // suppose we have enchants and items locally to upload
+                    const [itemsNow, enchantsNow] = await Promise.all([
+                      listItems(build.id, "all" as any),
+                      listEnchants(build.id),
+                    ]);
+                    await uploadBuild(build, itemsNow, enchantsNow);
+                    alert("Synced to cloud.");
+                  } catch (e: any) {
+                    alert(e.message || String(e));
+                  } finally {
+                    setSyncing(false);
+                  }
+                }}
+                disabled={syncing}
+              >
+                {syncing ? "Syncing…" : "Sync to cloud"}
+              </button>
+            ) : (
+              // User is not logged in
+              <div className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">
+                <p className="font-semibold">Login required to sync</p>
+                <p>Sign in with Discord to upload your build to the cloud.</p>
+                <button
+                  onClick={signInDiscord}
+                  className="mt-2 px-3 py-1.5 rounded bg-red-600 text-white hover:bg-red-700"
+                >
+                  Sign in with Discord
+                </button>
+              </div>
+            )}
           </div>
         </Card>
       )}
