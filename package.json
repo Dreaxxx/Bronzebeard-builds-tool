@@ -18,7 +18,7 @@
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.cjs --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
