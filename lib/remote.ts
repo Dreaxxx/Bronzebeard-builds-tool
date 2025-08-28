@@ -48,23 +48,21 @@ export async function uploadBuild(build: Build, items: BuildItem[], enchants: En
   const { data: session } = await sb.auth.getSession();
   if (!session.session) throw new Error("Sign in first");
   const owner = session.session.user.id;
-  const { error: e1 } = await sb
-    .from("builds")
-    .upsert({
-      id: build.id,
-      owner,
-      title: build.title,
-      realm: build.realm,
-      role: build.role,
-      class_tag: build.classTag ?? null,
-      tier_order: build.tiers,
-      is_public: build.isPublic,
-      comments_enabled: build.commentsEnabled,
-      description: build.description ?? null,
-      likes: build.likes || 0,
-      created_at: new Date(build.createdAt).toISOString(),
-      updated_at: new Date(build.updatedAt).toISOString(),
-    });
+  const { error: e1 } = await sb.from("builds").upsert({
+    id: build.id,
+    owner,
+    title: build.title,
+    realm: build.realm,
+    role: build.role,
+    class_tag: build.classTag ?? null,
+    tier_order: build.tiers,
+    is_public: build.isPublic,
+    comments_enabled: build.commentsEnabled,
+    description: build.description ?? null,
+    likes: build.likes || 0,
+    created_at: new Date(build.createdAt).toISOString(),
+    updated_at: new Date(build.updatedAt).toISOString(),
+  });
   if (e1) throw e1;
   const { error: eDelItems } = await sb.from("build_items").delete().eq("build_id", build.id);
   if (eDelItems) throw eDelItems;

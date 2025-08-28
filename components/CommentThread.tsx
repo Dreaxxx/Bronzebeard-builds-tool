@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import type { Build, Comment } from "@/lib/models";
 import { listComments, addComment, deleteComment } from "@/lib/storage";
@@ -40,13 +40,15 @@ export default function CommentThread({ build }: { build: Build }) {
   const [body, setBody] = useState("");
   const [replyTo, setReplyTo] = useState<Comment | null>(null);
 
-  async function refresh() {
-    setComments(await listComments(build.id));
-  }
+  const refresh = useCallback(async () => {
+    {
+      setComments(await listComments(build.id));
+    }
+  }, [build.id]);
 
   useEffect(() => {
     refresh();
-  }, [build.id]);
+  }, [build.id, refresh]);
 
   async function submit() {
     if (!author || !body) return;

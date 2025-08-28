@@ -1,5 +1,5 @@
 "use client";
-import Dexie from "dexie";
+import { Dexie } from "dexie";
 
 import type { Build, BuildItem, Enchant, Comment } from "./models";
 import type { Table } from "dexie";
