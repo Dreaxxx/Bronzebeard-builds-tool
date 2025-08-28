@@ -55,7 +55,7 @@ export async function deleteBuildEverywhere(buildId: string, alsoCloud: boolean)
   return cloud;
 }
 
-export async function listItems(buildId: string, tier?: Tier) {
+export async function listItems(buildId: string, tier?: Tier): Promise<BuildItem[]> {
   const q = db.items.where("buildId").equals(buildId);
   if (tier) return q.and((it) => it.tier === tier).sortBy("rank");
   return q.sortBy("rank");
@@ -63,7 +63,7 @@ export async function listItems(buildId: string, tier?: Tier) {
 export async function upsertItem(
   it: Partial<BuildItem> & { buildId: string; slot: Slot; tier: Tier; name: string },
 ) {
-  const id = (it as any).id ?? uid();
+  const id = it.id ?? uid();
   const record = { rank: 1, ...it, id } as BuildItem;
   await db.items.put(record);
   return record;
@@ -72,14 +72,14 @@ export async function removeItem(id: string) {
   await db.items.delete(id);
 }
 
-export async function listEnchants(buildId: string) {
+export async function listEnchants(buildId: string): Promise<Enchant[]> {
   return db.enchants.where("buildId").equals(buildId).toArray();
 }
 
 export async function upsertEnchant(
   e: Partial<Enchant> & { buildId: string; name: string; rarity: Rarity; slot: string },
 ) {
-  const id = (e as any).id ?? uid();
+  const id = e.id ?? uid();
   const record = { ...e, id } as Enchant;
   await db.enchants.put(record);
   return record;

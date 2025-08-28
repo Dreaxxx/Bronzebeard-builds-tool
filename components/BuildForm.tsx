@@ -21,10 +21,8 @@ export default function BuildForm({ initial, onSubmit }: Props) {
   const [role, setRole] = useState<Role>((initial?.role as Role) ?? "Caster/Range");
   const [classTag, setClassTag] = useState<string>(initial?.classTag ?? "Mage");
   const [tiersStr, setTiersStr] = useState((initial?.tiers ?? DEFAULT_TIERS).join(","));
-  const [isPublic, setIsPublic] = useState((initial as any)?.isPublic ?? false);
-  const [commentsEnabled, setCommentsEnabled] = useState(
-    (initial as any)?.commentsEnabled ?? false,
-  );
+  const [isPublic, setIsPublic] = useState(initial?.isPublic ?? false);
+  const [commentsEnabled, setCommentsEnabled] = useState(initial?.commentsEnabled ?? false);
   const [description, setDescription] = useState<string>(initial?.description ?? "");
 
   const classOptions = useMemo(() => classOptionsForRole(role), [role]);
@@ -49,15 +47,15 @@ export default function BuildForm({ initial, onSubmit }: Props) {
           />
         </div>
         <div>
-          <Label htmlFor="description">Short description (≤ 1000)</Label>
+          <Label htmlFor="description">Short description (≤ 3000)</Label>
           <Textarea
             id="description"
-            maxLength={1000}
+            maxLength={3000}
             placeholder="What is this build about? rotation, synergy, goals..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />
-          <p className="mt-1 text-xs text-neutral-500">{description.length}/1000</p>
+          <p className="mt-1 text-xs text-neutral-500">{description.length}/3000</p>
         </div>
         <Row>
           <div className="w-48">
@@ -128,7 +126,7 @@ export default function BuildForm({ initial, onSubmit }: Props) {
               const tiers = tiersStr
                 .split(",")
                 .map((s) => s.trim())
-                .filter(Boolean) as any;
+                .filter(Boolean) as Build["tiers"];
               onSubmit({
                 title,
                 realm,

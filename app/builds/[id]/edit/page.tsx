@@ -89,15 +89,15 @@ export default function EditBuild() {
       />
 
       <div>
-        <Label>Description (≤ 1000)</Label>
+        <Label>Description (≤ 3000)</Label>
         <Textarea
-          maxLength={1000}
+          maxLength={3000}
           value={build.description ?? ""}
           onChange={(e) => {
             setBuild({ ...build, description: e.target.value });
           }}
         />
-        <p className="text-xs text-neutral-500">{build.description?.length ?? 0}/1000</p>
+        <p className="text-xs text-neutral-500">{build.description?.length ?? 0}/3000</p>
       </div>
 
       <div className="flex gap-2">
@@ -142,7 +142,7 @@ export default function EditBuild() {
                   className="input"
                   value={build.role}
                   onChange={(e) => {
-                    setBuild({ ...build, role: e.target.value as any });
+                    setBuild({ ...build, role: e.target.value });
                   }}
                 >
                   <option value="Caster/Range">Caster/Range</option>
@@ -177,7 +177,7 @@ export default function EditBuild() {
                     tiers: e.target.value
                       .split(",")
                       .map((s) => s.trim())
-                      .filter(Boolean) as any,
+                      .filter(Boolean) as Build["tiers"],
                   })
                 }
               />
@@ -191,7 +191,7 @@ export default function EditBuild() {
                     setBuild({ ...build, isPublic: e.target.checked });
                   }}
                 />
-                <span>{t("common.public")}?</span>
+                <span>{t("common.public")} ?</span>
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -249,7 +249,7 @@ export default function EditBuild() {
                     setSyncing(true);
                     // suppose we have enchants and items locally to upload
                     const [itemsNow, enchantsNow] = await Promise.all([
-                      listItems(build.id, "all" as any),
+                      listItems(build.id, "Raid"),
                       listEnchants(build.id),
                     ]);
                     await uploadBuild(build, itemsNow, enchantsNow);

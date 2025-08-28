@@ -9,7 +9,7 @@ export default function SyncButtons({ build }: { build: Build }) {
     try {
       const items = await listItems(build.id);
       const ench = await listEnchants(build.id);
-      await uploadBuild(build, items as any, ench as any);
+      await uploadBuild(build, items, ench);
       alert("Upload OK");
     } catch (e) {
       alert(String(e));

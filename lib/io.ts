@@ -25,10 +25,7 @@ const uid = () =>
 export async function exportBuildBundle(buildId: string): Promise<Blob> {
   const build = await getBuild(buildId);
   if (!build) throw new Error("Build not found");
-  const [items, enchants] = await Promise.all([
-    listItems(buildId, "all" as any),
-    listEnchants(buildId),
-  ]);
+  const [items, enchants] = await Promise.all([listItems(buildId, "All"), listEnchants(buildId)]);
   const bundle: BuildBundle = { version: 1, build, items, enchants };
   return new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
 }
@@ -43,7 +40,7 @@ export async function importBuildBundleFile(file: File): Promise<string> {
   const created = await createBuild({
     title: `${src.title} (import)`,
     realm: src.realm,
-    role: src.role as any,
+    role: src.role,
     classTag: src.classTag,
     tiers: src.tiers,
     isPublic: false,
@@ -57,14 +54,14 @@ export async function importBuildBundleFile(file: File): Promise<string> {
       id: uid(),
       buildId: created.id,
       tier: it.tier,
-      slot: it.slot as any,
+      slot: it.slot,
       rank: it.rank ?? 1,
       name: it.name,
       stats: it.stats ?? {},
       source: it.source ?? "",
       notes: it.notes ?? "",
       href: it.href ?? null,
-    } as any);
+    });
   }
 
   // enchants

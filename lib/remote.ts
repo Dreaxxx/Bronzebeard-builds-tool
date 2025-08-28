@@ -3,7 +3,7 @@ import { db } from "@/lib/db";
 
 import { supabase } from "./supabaseClient";
 
-import type { Build, BuildItem, Enchant } from "./models";
+import type { Build, BuildItem, Enchant, Tier } from "./models";
 
 export async function authGetUser() {
   const sb = supabase();
@@ -130,7 +130,7 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
     realm: b.realm,
     role: b.role,
     classTag: b.class_tag ?? undefined,
-    tiers: (b.tier_order as any) ?? [],
+    tiers: (b.tier_order as Tier[]) ?? [],
     isPublic: b.is_public,
     commentsEnabled: b.comments_enabled,
     description: b.description ?? null,
@@ -141,24 +141,24 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
     origin: "cloud",
   };
 
-  const mappedItems: BuildItem[] = items!.map((it: any) => ({
+  const mappedItems: BuildItem[] = items!.map((it) => ({
     id: it.id,
-    buildId: it.build_id,
-    tier: it.tier,
-    slot: it.slot,
+    buildId: it.build_id as string,
+    tier: it.tier as Tier,
+    slot: it.slot as BuildItem["slot"],
     rank: it.rank,
     name: it.name,
-    stats: it.stats ?? {},
+    stats: (it.stats as Record<string, number>) ?? {},
     source: it.source ?? undefined,
     notes: it.notes ?? undefined,
     href: it.href ?? null,
   }));
 
-  const mappedEnchants: Enchant[] = enchants!.map((en: any) => ({
+  const mappedEnchants: Enchant[] = enchants!.map((en) => ({
     id: en.id,
-    buildId: en.build_id,
+    buildId: en.build_id as string,
     name: en.name,
-    rarity: en.rarity,
+    rarity: en.rarity as Enchant["rarity"],
     slot: en.slot,
     cost: en.cost ?? undefined,
     notes: en.notes ?? undefined,

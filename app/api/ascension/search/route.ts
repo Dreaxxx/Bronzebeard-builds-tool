@@ -91,7 +91,7 @@ export async function GET(req: NextRequest) {
     let res = await fetch(urlSearch, { headers: { "User-Agent": "Mozilla/5.0 BronzeBeardReady" } });
     let text = await res.text();
 
-    if (!text || text.length < 1000) {
+    if (!text || text.length < 3000) {
       res = await fetch(urlFilter, { headers: { "User-Agent": "Mozilla/5.0 BronzeBeardReady" } });
       text = await res.text();
     }

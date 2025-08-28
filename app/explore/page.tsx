@@ -21,9 +21,9 @@ export default function Explore() {
     (async () => {
       const sb = supabase();
       if (sb) {
-        const { data } = await sb.from("builds").select("*").eq("is_public", true).limit(1000);
+        const { data } = await sb.from("builds").select("*").eq("is_public", true).limit(3000);
         if (data) {
-          const mapped = (data as any[]).map((b) => ({
+          const mapped = data.map((b) => ({
             id: b.id,
             title: b.title,
             realm: b.realm,
@@ -34,14 +34,14 @@ export default function Explore() {
             updatedAt: Date.parse(b.updated_at),
             likes: b.likes || 0,
             isPublic: b.is_public,
-            commentsEnabled: (b as any).comments_enabled ?? false,
+            commentsEnabled: b.comments_enabled ?? false,
           }));
-          setBuilds(mapped as any);
+          setBuilds(mapped as Build[]);
           return;
         }
       }
-      const local = (await listBuilds()).filter((b: any) => b.isPublic);
-      setBuilds(local as any);
+      const local = (await listBuilds()).filter((b) => b.isPublic);
+      setBuilds(local);
     })();
   }, []);
 

@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import type { Build, Comment } from "@/lib/models";
 import { listComments, addComment, deleteComment } from "@/lib/storage";
 
-import { Button, Input, Label, Card, Textarea } from "./ui";
+import { Button, Label, Card, Textarea } from "./ui";
 
 function CommentItem({
   c,
@@ -19,7 +19,7 @@ function CommentItem({
     <div className="rounded-lg border border-neutral-200 p-3 dark:border-neutral-800">
       <div className="text-sm text-neutral-500">
         {new Date(c.createdAt).toLocaleString()} •{" "}
-        <span className="font-medium">{c.authorName}</span>
+        {/* <span className="font-medium">{c.authorName}</span> */}
       </div>
       <div className="mt-1 whitespace-pre-wrap">{c.body}</div>
       <div className="mt-2 flex gap-3 text-sm">
@@ -81,19 +81,14 @@ export default function CommentThread({ build }: { build: Build }) {
       <Card>
         <div className="space-y-2">
           <Label>New comment</Label>
-          {replyTo && (
+          {/* {replyTo && (
             <div className="text-xs text-neutral-500">
               Replying to <span className="font-medium">{replyTo.authorName}</span> —{" "}
               <button className="underline" onClick={() => setReplyTo(null)}>
                 Cancel
               </button>
             </div>
-          )}
-          <Input
-            placeholder="Your name"
-            value={author}
-            onChange={(e) => setAuthor(e.target.value)}
-          />
+          )} */}
           <Textarea
             placeholder="Your message..."
             value={body}

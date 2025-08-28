@@ -6,7 +6,7 @@ import CommentThread from "@/components/CommentThread";
 import { Card, Button, Pill } from "@/components/ui";
 
 import { useI18n } from "@/lib/i18n/store";
-import type { Build, Tier } from "@/lib/models";
+import type { Build, BuildItem, Enchant, Tier } from "@/lib/models";
 import { likePublicBuild, fetchBuildBundleFromCloud, putBuildDeep } from "@/lib/remote";
 import { SLOTS } from "@/lib/slots";
 import {
@@ -26,8 +26,8 @@ export default function ViewBuild() {
   const [build, setBuild] = useState<Build | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [tier, setTier] = useState<Tier | null>(null);
-  const [items, setItems] = useState<any[]>([]);
-  const [enchants, setEnchants] = useState<any[]>([]);
+  const [items, setItems] = useState<BuildItem[]>([]);
+  const [enchants, setEnchants] = useState<Enchant[]>([]);
   const [liking, setLiking] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -77,8 +77,8 @@ export default function ViewBuild() {
   }, [params.id]);
 
   const itemsBySlot = useMemo(() => {
-    const m: Record<string, any[]> = {};
-    (SLOTS as any).forEach((s: string) => (m[s] = []));
+    const m: Record<string, BuildItem[]> = {};
+    SLOTS.forEach((s: string) => (m[s] = []));
     for (const it of items) (m[it.slot] || []).push(it);
     Object.keys(m).forEach((s) => m[s].sort((a, b) => a.rank - b.rank));
     return m;
@@ -187,7 +187,7 @@ export default function ViewBuild() {
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">BiS — {tier}</h2>
         <div className="grid gap-3 md:grid-cols-2">
-          {(SLOTS as any).map((slot: string) => (
+          {SLOTS.map((slot: string) => (
             <Card key={slot}>
               <h3 className="font-semibold">{slot}</h3>
               <ul className="mt-2 space-y-1">
@@ -229,9 +229,6 @@ export default function ViewBuild() {
                 <span className="badge mr-2">{en.rarity}</span>
                 <span className="font-medium">{en.name}</span>
                 {en.slot && <span className="text-neutral-500"> • {en.slot}</span>}
-                {en.tags?.length > 0 && (
-                  <span className="text-neutral-500"> • {en.tags.join(", ")}</span>
-                )}
                 {typeof en.cost === "number" && (
                   <span className="text-neutral-500"> • cost {en.cost}</span>
                 )}
@@ -259,6 +256,14 @@ export default function ViewBuild() {
 
       <section className="space-y-3">
         <h2 className="text-xl font-semibold">{t("build.comments")}</h2>
+        <p className="flex items-center gap-2 text-sm text-neutral-500">
+          <svg width="16" height="16" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+            <circle cx="10" cy="10" r="9" stroke="#f59e42" strokeWidth="2" fill="#fffbe6" />
+            <rect x="9" y="6" width="2" height="6" rx="1" fill="#f59e42" />
+            <rect x="9" y="13" width="2" height="2" rx="1" fill="#f59e42" />
+          </svg>
+          Comments are only for local usage. Noone else can see them.
+        </p>
         {build.isPublic && build.commentsEnabled ? (
           <CommentThread build={build} />
         ) : (

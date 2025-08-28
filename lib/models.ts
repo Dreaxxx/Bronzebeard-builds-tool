@@ -1,4 +1,4 @@
-export type Tier = "Raid" | "M0" | "M+<10" | "M+10-14" | "M+15+";
+export type Tier = "All" | "Raid" | "M0" | "M+<10" | "M+10-14" | "M+15+";
 export type Slot =
   | "Head"
   | "Neck"

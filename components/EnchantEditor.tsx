@@ -36,19 +36,22 @@ export default function EnchantEditor({ build }: { build: Build }) {
     () =>
       enchants.reduce(
         (m, e) => {
-          (m.total++, ((m as any)[e.rarity] = ((m as any)[e.rarity] || 0) + 1));
+          (m.total++, (m[e.rarity] = (m[e.rarity] || 0) + 1));
           return m;
         },
-        { total: 0, Artifact: 0, Rare: 0, Epic: 0, Legendary: 0 } as any,
+        { total: 0, Artifact: 0, Rare: 0, Epic: 0, Legendary: 0 } as Record<
+          Rarity | "total",
+          number
+        >,
       ),
     [enchants],
   );
   const over = {
     total: counts.total > quota.total,
-    Artifact: counts.Artifact > quota.Artifact,
     Rare: counts.Rare > quota.Rare,
     Epic: counts.Epic > quota.Epic,
     Legendary: counts.Legendary > quota.Legendary,
+    Artifact: counts.Artifact > quota.Artifact,
   };
 
   return (
@@ -63,7 +66,7 @@ export default function EnchantEditor({ build }: { build: Build }) {
           {RARITIES.map((r) => (
             <div key={r}>
               <span className={"badge " + (over[r] ? "border-red-500 text-red-600" : "")}>
-                {r}: {counts[r]}/{(quota as any)[r]}
+                {r}: {counts[r]}/{quota[r]}
               </span>
             </div>
           ))}
@@ -104,7 +107,7 @@ export default function EnchantEditor({ build }: { build: Build }) {
               <Input value={en.name} onChange={(e) => save({ ...en, name: e.target.value })} />
               <Select
                 value={en.rarity}
-                onChange={(e) => save({ ...en, rarity: e.target.value as any })}
+                onChange={(e) => save({ ...en, rarity: e.target.value as Rarity })}
               >
                 {RARITIES.map((r) => (
                   <option key={r} value={r}>
