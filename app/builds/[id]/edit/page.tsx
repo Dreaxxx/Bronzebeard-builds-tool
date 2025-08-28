@@ -42,7 +42,7 @@ export default function EditBuild() {
 
   useEffect(() => {
     if (build) setTiersInput((build.tiers ?? []).join(", "));
-  }, [build!.tiers]);
+  }, [build, build?.tiers]);
 
   useEffect(() => {
     (async () => setBuild(await getBuild(params.id)))();
