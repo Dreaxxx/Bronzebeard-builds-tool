@@ -60,6 +60,7 @@ export async function listItems(buildId: string, tier?: Tier): Promise<BuildItem
   if (tier) return q.and((it) => it.tier === tier).sortBy("rank");
   return q.sortBy("rank");
 }
+
 export async function upsertItem(
   it: Partial<BuildItem> & { buildId: string; slot: Slot; tier: Tier; name: string },
 ) {
@@ -68,6 +69,7 @@ export async function upsertItem(
   await db.items.put(record);
   return record;
 }
+
 export async function removeItem(id: string) {
   await db.items.delete(id);
 }

@@ -24,6 +24,7 @@ export default function EditBuild() {
   const params = useParams<{ id: string }>();
   const [build, setBuild] = useState<Build | null>(null);
   const [tab, setTab] = useState<Tab>("bis");
+  const [tiersInput, setTiersInput] = useState<string>("");
 
   const [syncing, setSyncing] = useState(false);
 
@@ -39,6 +40,14 @@ export default function EditBuild() {
     return () => sub?.subscription?.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    if (build) setTiersInput((build.tiers ?? []).join(", "));
+  }, [build?.tiers]);
+
+  useEffect(() => {
+    (async () => setBuild(await getBuild(params.id)))();
+  }, [params.id]);
+
   async function signInDiscord() {
     const sb = supabase()!;
     await sb.auth.signInWithOAuth({
@@ -47,9 +56,13 @@ export default function EditBuild() {
     });
   }
 
-  useEffect(() => {
-    (async () => setBuild(await getBuild(params.id)))();
-  }, [params.id]);
+  function commitTiers(value: string) {
+    const parsed = value
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean) as Build["tiers"];
+    setBuild({ ...build!, tiers: parsed });
+  }
 
   if (!build) return <p>Loading…</p>;
 
@@ -170,17 +183,20 @@ export default function EditBuild() {
             <div>
               <Label>{t("build.settings.order")}</Label>
               <Input
-                value={build.tiers.join(",")}
-                onChange={(e) =>
-                  setBuild({
-                    ...build,
-                    tiers: e.target.value
-                      .split(",")
-                      .map((s) => s.trim())
-                      .filter(Boolean) as Build["tiers"],
-                  })
-                }
+                placeholder="Raid, Heroic, P1… (comma separated)"
+                value={tiersInput}
+                onChange={(e) => setTiersInput(e.target.value)} // on tape librement
+                onBlur={(e) => commitTiers(e.currentTarget.value)} // parse au blur
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    commitTiers((e.target as HTMLInputElement).value); // parse sur Enter
+                  }
+                }}
               />
+              <p className="text-xs text-neutral-500">
+                {build.tiers.length} tier(s): {build.tiers.join(", ")}
+              </p>
             </div>
             <div className="space-y-2">
               <label className="flex items-center gap-2">
@@ -247,11 +263,13 @@ export default function EditBuild() {
                 onClick={async () => {
                   try {
                     setSyncing(true);
-                    // suppose we have enchants and items locally to upload
-                    const [itemsNow, enchantsNow] = await Promise.all([
-                      listItems(build.id, "Raid"),
-                      listEnchants(build.id),
-                    ]);
+
+                    const itemsNow = (
+                      await Promise.all((build.tiers ?? []).map((t) => listItems(build.id, t)))
+                    ).flat();
+
+                    const enchantsNow = await listEnchants(build.id);
+
                     await uploadBuild(build, itemsNow, enchantsNow);
                     alert("Synced to cloud.");
                   } catch (e: any) {
