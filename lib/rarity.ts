@@ -1,5 +1,12 @@
 import type { Rarity } from "./models";
 
+export const RARITY_ORDER: Record<string, number> = {
+  legendary: 0,
+  epic: 1,
+  rare: 2,
+  artifact: 3,
+};
+
 export const RARITY_COLORS_HEX: Record<string, string> = {
   Rare: "#0070dd",
   Epic: "#a335ee",
@@ -10,6 +17,10 @@ export const RARITY_COLORS_HEX: Record<string, string> = {
 export function colorForRarity(r: Rarity | undefined): string {
   if (!r) return "#9ca3af";
   return RARITY_COLORS_HEX[r] ?? "#9ca3af";
+}
+
+export function rarityRank(r?: string | null) {
+  return RARITY_ORDER[(r ?? "").toLowerCase()] ?? 99; // inconnus à la fin
 }
 
 export function hexToRgb(hex: string): { r: number; g: number; b: number } {

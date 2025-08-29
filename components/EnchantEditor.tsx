@@ -41,10 +41,8 @@ export default function EnchantEditor({ build }: { build: Build }) {
     setEnchants(await listEnchants(build.id));
   }
 
-  // Recherche Ascension DB pour un enchant donné
   const [openForId, setOpenForId] = useState<string | null>(null);
 
-  // Options de rareté affichées (avec tes couleurs ailleurs via EnchantRow/RarityTag)
   const RARITY_OPTIONS = ["Rare", "Epic", "Legendary", "Artifact"] as const;
 
   return (

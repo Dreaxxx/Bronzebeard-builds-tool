@@ -54,6 +54,7 @@ export type BuildItem = {
 };
 
 export type Rarity = "Rare" | "Epic" | "Legendary" | "Artifact";
+
 export type Enchant = {
   id: string;
   buildId: string;
