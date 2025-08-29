@@ -15,6 +15,7 @@ export default function LangSwitcher() {
   const { lang, setLang } = useI18n();
   return (
     <Select
+      id="lang-select"
       value={lang}
       onChange={(e) => {
         const v = e.target.value as Lang;
