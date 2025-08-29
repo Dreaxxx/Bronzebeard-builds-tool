@@ -25,8 +25,13 @@ const uid = () =>
 export async function exportBuildBundle(buildId: string): Promise<Blob> {
   const build = await getBuild(buildId);
   if (!build) throw new Error("Build not found");
-  const [items, enchants] = await Promise.all([listItems(buildId, "All"), listEnchants(buildId)]);
-  const bundle: BuildBundle = { version: 1, build, items, enchants };
+
+  const itemsNow = (
+    await Promise.all((build.tiers ?? []).map((t) => listItems(build.id, t)))
+  ).flat();
+  const enchantsNow = await listEnchants(build.id);
+
+  const bundle: BuildBundle = { version: 1, build, items: itemsNow, enchants: enchantsNow };
   return new Blob([JSON.stringify(bundle, null, 2)], { type: "application/json" });
 }
 
