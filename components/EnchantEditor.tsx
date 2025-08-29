@@ -45,12 +45,12 @@ export default function EnchantEditor({ build }: { build: Build }) {
   const [openForId, setOpenForId] = useState<string | null>(null);
 
   // Options de rareté affichées (avec tes couleurs ailleurs via EnchantRow/RarityTag)
-  const RARITY_OPTIONS = ["", "Rare", "Epic", "Legendary", "Artifact"] as const;
+  const RARITY_OPTIONS = ["Rare", "Epic", "Legendary", "Artifact"] as const;
 
   return (
     <div className="space-y-4">
       <div className="mb-2 flex items-center justify-between">
-        <h3 className="font-semibold">{t("enchants.title") ?? "Mystic Enchants"}</h3>
+        <h3 className="font-semibold">Mystic Enchants</h3>
         <Button onClick={add}>+ Enchant</Button>
       </div>
 
@@ -92,7 +92,7 @@ export default function EnchantEditor({ build }: { build: Build }) {
                   >
                     {RARITY_OPTIONS.map((r) => (
                       <option key={r} value={r}>
-                        {r || "(Unknown)"}
+                        {r || "Epic"}
                       </option>
                     ))}
                   </Select>

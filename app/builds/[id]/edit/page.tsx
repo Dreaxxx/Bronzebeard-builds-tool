@@ -17,13 +17,13 @@ import { supabase } from "@/lib/supabaseClient";
 
 import type { Session } from "@supabase/supabase-js";
 
-type Tab = "bis" | "enchants" | "settings";
+type Tab = "enchants" | "bis" | "settings";
 
 export default function EditBuild() {
   const { t } = useI18n();
   const params = useParams<{ id: string }>();
   const [build, setBuild] = useState<Build | null>(null);
-  const [tab, setTab] = useState<Tab>("bis");
+  const [tab, setTab] = useState<Tab>("enchants");
   const [tiersInput, setTiersInput] = useState<string>("");
 
   const [syncing, setSyncing] = useState(false);
@@ -115,16 +115,16 @@ export default function EditBuild() {
 
       <div className="flex gap-2">
         <button
-          className={"btn " + (tab === "bis" ? "btn-primary" : "")}
-          onClick={() => setTab("bis")}
-        >
-          {t("build.tabs.bis")}
-        </button>
-        <button
           className={"btn " + (tab === "enchants" ? "btn-primary" : "")}
           onClick={() => setTab("enchants")}
         >
           {t("build.tabs.enchants")}
+        </button>
+        <button
+          className={"btn " + (tab === "bis" ? "btn-primary" : "")}
+          onClick={() => setTab("bis")}
+        >
+          {t("build.tabs.bis")}
         </button>
         <button
           className={"btn " + (tab === "settings" ? "btn-primary" : "")}
@@ -134,8 +134,8 @@ export default function EditBuild() {
         </button>
       </div>
 
-      {tab === "bis" && <TierEditor build={build} />}
       {tab === "enchants" && <EnchantEditor build={build} />}
+      {tab === "bis" && <TierEditor build={build} />}
       {tab === "settings" && (
         <Card>
           <div className="space-y-3">
@@ -185,12 +185,12 @@ export default function EditBuild() {
               <Input
                 placeholder="Raid, Heroic, P1… (comma separated)"
                 value={tiersInput}
-                onChange={(e) => setTiersInput(e.target.value)} // on tape librement
-                onBlur={(e) => commitTiers(e.currentTarget.value)} // parse au blur
+                onChange={(e) => setTiersInput(e.target.value)}
+                onBlur={(e) => commitTiers(e.currentTarget.value)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    commitTiers((e.target as HTMLInputElement).value); // parse sur Enter
+                    commitTiers((e.target as HTMLInputElement).value);
                   }
                 }}
               />

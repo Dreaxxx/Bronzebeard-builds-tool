@@ -185,6 +185,27 @@ export default function ViewBuild() {
         </Card>
       )}
 
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">Mystic Enchants</h2>
+        <Card>
+          <ul className="grid gap-2 md:grid-cols-2">
+            {enchants.map((en) => (
+              <EnchantRow
+                key={en.id}
+                name={en.name}
+                rarity={en.rarity}
+                url={en.href || undefined}
+                notes={en.notes || undefined}
+              />
+            ))}
+
+            {enchants.length === 0 && (
+              <li className="text-sm text-neutral-500">{t("empty.none")}</li>
+            )}
+          </ul>
+        </Card>
+      </section>
+
       <section className="space-y-4">
         <h2 className="text-xl font-semibold">BiS — {tier}</h2>
         <div className="grid gap-3 md:grid-cols-2">
@@ -219,27 +240,6 @@ export default function ViewBuild() {
             </Card>
           ))}
         </div>
-      </section>
-
-      <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Mystic Enchants</h2>
-        <Card>
-          <ul className="grid gap-2 md:grid-cols-2">
-            {enchants.map((en) => (
-              <EnchantRow
-                key={en.id}
-                name={en.name}
-                rarity={en.rarity}
-                url={en.href || undefined}
-                notes={en.notes || undefined}
-              />
-            ))}
-
-            {enchants.length === 0 && (
-              <li className="text-sm text-neutral-500">{t("empty.none")}</li>
-            )}
-          </ul>
-        </Card>
       </section>
 
       <section className="space-y-3">
