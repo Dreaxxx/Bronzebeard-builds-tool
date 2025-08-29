@@ -61,8 +61,6 @@ export default function HomePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-semibold">Your builds</h1>
-
       {/* Tabs */}
       <div className="flex gap-2">
         <button
@@ -70,14 +68,14 @@ export default function HomePage() {
           style={{ borderColor: "#ffffff2e" }}
           className={`rounded px-3 py-1.5 ${tab === "my" ? "bg-blue-600 text-white" : "bg-grey-600 hover:bg-grey-300 rounded border border-solid"}`}
         >
-          My Builds
+          {t("home.myBuilds")}
         </button>
         <button
           onClick={() => setTab("saved")}
           style={{ borderColor: "#ffffff4e" }}
           className={`rounded px-3 py-1.5 ${tab === "saved" ? "bg-blue-600 text-white" : "bg-grey-600 hover:bg-grey-300 rounded border border-solid"}`}
         >
-          Saved Locally
+          {t("home.savedLocal")}
         </button>
       </div>
 
@@ -96,7 +94,7 @@ export default function HomePage() {
 
         {list.length === 0 && (
           <p className="text-sm text-neutral-500">
-            {tab === "my" ? "You have no builds yet." : "No locally saved builds yet."}
+            {tab === "my" ? t("home.noOwnBuildsDetected") : t("home.noLocalBuildsDetected")}
           </p>
         )}
       </div>

@@ -48,11 +48,11 @@ export default function BuildForm({ initial, onSubmit }: Props) {
           />
         </div>
         <div>
-          <Label htmlFor="description">Short description (≤ 3000)</Label>
+          <Label htmlFor="description">{t("common.description")} (≤ 3000)</Label>
           <Textarea
             id="description"
             maxLength={3000}
-            placeholder="What is this build about? rotation, synergy, goals..."
+            placeholder={t("form.descriptionHint")}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           />

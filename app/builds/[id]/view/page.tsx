@@ -341,7 +341,7 @@ export default function ViewBuild() {
                     className="w-full rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow hover:bg-indigo-700"
                     title="Save this build locally"
                   >
-                    {saving ? "Saving…" : "Save locally"}
+                    {saving ? "Saving…" : t("build.overview.save")}
                   </button>
                 ) : (
                   <button
@@ -349,7 +349,7 @@ export default function ViewBuild() {
                     className="w-full rounded-md bg-neutral-800 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-neutral-700 hover:bg-neutral-700"
                     title="Remove from saved"
                   >
-                    Saved ✓ (remove)
+                    {t("build.overview.saved")}
                   </button>
                 )}
                 <Link

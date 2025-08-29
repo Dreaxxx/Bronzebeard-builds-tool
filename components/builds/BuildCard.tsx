@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 
 import { Pill } from "@/components/ui";
 
+import { useI18n } from "@/lib/i18n/store";
 import type { Build } from "@/lib/models";
 import { deleteBuildEverywhere, deleteBuildLocal, unmarkBuildSavedLocally } from "@/lib/storage";
 
@@ -24,6 +25,7 @@ type Props = {
 export default function BuildCard({ build, variant, session, onDeleted, onUnsaved }: Props) {
   const [busy, setBusy] = useState(false);
   const userId = session?.user.id ?? null;
+  const { t } = useI18n();
 
   const isOwned = useMemo(
     () => !!build.ownerId && build.ownerId === userId,
@@ -112,7 +114,7 @@ export default function BuildCard({ build, variant, session, onDeleted, onUnsave
           href={`/builds/${build.id}/view`}
           className="rounded bg-green-500 px-3 py-1.5 hover:bg-green-600"
         >
-          View
+          {t("common.view") ?? "View"}
         </Link>
 
         {canEdit ? (
@@ -120,11 +122,11 @@ export default function BuildCard({ build, variant, session, onDeleted, onUnsave
             href={`/builds/${build.id}/edit`}
             className="rounded bg-blue-600 px-3 py-1.5 text-white hover:bg-blue-700"
           >
-            Edit
+            {t("common.edit") ?? "Edit"}
           </Link>
         ) : (
           <span className="cursor-not-allowed rounded bg-neutral-200 px-3 py-1.5 opacity-50">
-            Edit
+            {t("common.edit") ?? "Edit"}
           </span>
         )}
       </div>

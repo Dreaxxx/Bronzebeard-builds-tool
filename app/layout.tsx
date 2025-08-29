@@ -45,7 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
               <nav className="hidden items-center gap-2 md:flex">
                 <a href="/explore" className="btn btn-ghost">
-                  Explore
+                  Explore Builds List
                 </a>
               </nav>
 
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
             <div className="mt-2 flex items-center gap-2 md:hidden">
               <a href="/explore" className="btn w-full justify-center">
-                Explore
+                Explore Builds List
               </a>
               <span className="text-xs text-neutral-500">Beta</span>
             </div>

@@ -117,7 +117,6 @@ export async function GET(req: NextRequest) {
         );
     }
 
-    // expose l’URL de recherche (sera utilisée par “Open in DB” dans l’UI)
     return NextResponse.json({ results, source: urlSearch });
   } catch (e: any) {
     return NextResponse.json({ results: [], error: String(e), source: urlSearch }, { status: 200 });
