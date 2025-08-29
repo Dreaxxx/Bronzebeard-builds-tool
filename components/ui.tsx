@@ -1,59 +1,105 @@
-"use client";
 import { clsx } from "clsx";
-import React from "react";
-export function Button({ className, ...props }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <button className={clsx("btn", className)} {...props} />;
-}
-export function PrimaryButton({
-  className,
-  ...props
-}: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return <button className={clsx("btn btn-primary", className)} {...props} />;
-}
-export function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return <input className="input" {...props} />;
-}
-export function Textarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  return <textarea className="input min-h-[120px]" {...props} />;
-}
-export function Label(props: React.LabelHTMLAttributes<HTMLLabelElement>) {
-  return <label className="label" {...props} />;
-}
-export function Card({ children, className }: React.PropsWithChildren<{ className?: string }>) {
-  return <div className={clsx("card", className)}>{children}</div>;
-}
-export function Row({ children, className }: React.PropsWithChildren<{ className?: string }>) {
-  return <div className={clsx("flex flex-wrap items-center gap-3", className)}>{children}</div>;
-}
-export function Pill({ children }: React.PropsWithChildren) {
-  return <span className="badge">{children}</span>;
+import * as React from "react";
+
+/** Carte “glass” */
+export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return <div className={clsx("card p-4", className)} {...props} />;
 }
 
+/** Bouton */
+export function Button({
+  className,
+  variant = "default",
+  ...props
+}: React.ButtonHTMLAttributes<HTMLButtonElement> & {
+  variant?: "default" | "primary" | "ghost" | "danger";
+}) {
+  const base = "btn";
+  const look =
+    variant === "primary"
+      ? "btn-primary"
+      : variant === "ghost"
+        ? "btn-ghost"
+        : variant === "danger"
+          ? "btn-danger"
+          : "";
+  return <button className={clsx(base, look, className)} {...props} />;
+}
+
+/** Champ texte */
+export function Input({ className, ...props }: React.InputHTMLAttributes<HTMLInputElement>) {
+  return <input className={clsx("input", className)} {...props} />;
+}
+
+/** Select natif (trigger stylé) */
 export function Select({ className, ...props }: React.SelectHTMLAttributes<HTMLSelectElement>) {
+  return <select className={clsx("select", className)} {...props} />;
+}
+
+/** Zone de texte */
+export function Textarea({
+  className,
+  ...props
+}: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return <textarea className={clsx("textarea", className)} {...props} />;
+}
+
+/** Label simple */
+export function Label({ className, ...props }: React.LabelHTMLAttributes<HTMLLabelElement>) {
   return (
-    <div className="relative">
-      <select
-        className={clsx(
-          // base "input" if you have it, otherwise custom styles:
-          "w-full rounded-md border bg-neutral-900 text-neutral-100",
-          "border-neutral-700 placeholder-neutral-400",
-          "px-3 py-2 pr-9 outline-none",
-          "focus:border-blue-400 focus:ring-2 focus:ring-blue-500/60",
-          "disabled:cursor-not-allowed disabled:opacity-50",
-          "appearance-none",
-          className,
-        )}
-        {...props}
-      />
-      {/* visible for screen readers */}
-      <svg
-        aria-hidden
-        className="pointer-events-none absolute right-2 top-1/2 h-4 w-4 -translate-y-1/2 opacity-70"
-        viewBox="0 0 20 20"
-        fill="currentColor"
-      >
-        <path d="M5.5 7.5l4.5 4.5 4.5-4.5" />
-      </svg>
+    <label
+      className={clsx("mb-1 block text-xs font-medium text-[hsl(var(--muted-fg))]", className)}
+      {...props}
+    />
+  );
+}
+
+/** Petites pastilles (“Pill”) */
+export function Pill({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+  return <span className={clsx("pill", className)} {...props} />;
+}
+
+/** Badge (compact) */
+export function Badge({ className, ...props }: React.HTMLAttributes<HTMLSpanElement>) {
+  return <span className={clsx("badge", className)} {...props} />;
+}
+
+/** Segmented control simple (tu peux l’utiliser pour les tiers) */
+export function Segmented({
+  options,
+  value,
+  onChange,
+  className,
+}: {
+  options: string[];
+  value: string | null;
+  onChange: (v: string) => void;
+  className?: string;
+}) {
+  return (
+    <div className={clsx("segmented", className)}>
+      {options.map((opt) => {
+        const active = value === opt;
+        return (
+          <button key={opt} className={clsx(active && "active")} onClick={() => onChange(opt)}>
+            {opt}
+          </button>
+        );
+      })}
     </div>
+  );
+}
+
+export function PrimaryButton(props: React.ButtonHTMLAttributes<HTMLButtonElement>) {
+  return <button {...props} className={clsx("btn btn-primary", props.className)} />;
+}
+
+// Ligne/row de formulaire responsive (label + champ)
+export function Row({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={clsx("flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3", className)}
+      {...props}
+    />
   );
 }

@@ -2,54 +2,143 @@
 @tailwind components;
 @tailwind utilities;
 
+/* === Design tokens (dark par défaut) === */
 :root {
-  --bg: 255 255 255;
-  --fg: 31 31 31;
+  /* Fond / texte */
+  --bg: 222 33% 7%;
+  --fg: 0 0% 98%;
+  --muted: 220 14% 16%;
+  --muted-fg: 220 10% 65%;
+
+  /* Cartes / bordures / anneaux */
+  --card: 220 18% 10%;
+  --card-fg: 0 0% 98%;
+  --border: 220 12% 20%;
+  --ring: 220 12% 35%;
+
+  /* Accents (bleu foncé, vibe Ascension) */
+  --primary: 221 83% 53%;
+  --primary-fg: 0 0% 100%;
+  --accent: 223 13% 19%;
+  --accent-fg: 0 0% 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: 14 14 14;
-    --fg: 235 235 235;
-  }
-}
-
+html,
 body {
-  background: rgb(var(--bg));
-  color: rgb(var(--fg));
+  @apply bg-[hsl(var(--bg))] text-[hsl(var(--fg))];
 }
 
-.container {
-  @apply mx-auto max-w-5xl px-4;
-}
+/* === Composants utilitaires “compat” (réutilise tes classes existantes) === */
+@layer components {
+  .page {
+    @apply container mx-auto py-6;
+  }
 
-.card {
-  @apply rounded-2xl border border-neutral-200 p-4 shadow-sm dark:border-neutral-800;
-}
+  .card {
+    @apply rounded-2xl bg-[hsl(var(--card))]/60 ring-1 ring-[hsl(var(--border))] backdrop-blur-sm;
+  }
 
-.btn {
-  @apply inline-flex items-center gap-2 rounded-xl border border-neutral-300 px-3 py-2 text-sm hover:bg-neutral-50 dark:border-neutral-700 dark:hover:bg-neutral-900;
-}
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-md border border-transparent px-3 py-1.5 text-sm font-medium transition;
+    @apply bg-neutral-900 text-white ring-1 ring-[hsl(var(--border))] hover:bg-neutral-800;
+  }
+  .btn-primary {
+    @apply bg-[hsl(var(--primary))] text-[hsl(var(--primary-fg))] hover:brightness-110;
+  }
+  .btn-ghost {
+    @apply bg-transparent text-[hsl(var(--fg))] ring-1 ring-[hsl(var(--border))] hover:bg-neutral-900/40;
+  }
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700;
+  }
 
-.btn-primary {
-  @apply border-blue-600 bg-blue-600 text-white hover:bg-blue-700;
-}
+  .input,
+  .select,
+  .textarea {
+    @apply w-full rounded-lg bg-neutral-900/70 text-[hsl(var(--fg))] placeholder:text-[hsl(var(--muted-fg))];
+    @apply px-3 py-2 outline-none ring-1 ring-[hsl(var(--border))] transition focus:ring-2 focus:ring-[hsl(var(--ring))];
+  }
 
-.input {
-  @apply w-full rounded-lg border border-neutral-300 bg-transparent px-3 py-2 text-sm dark:border-neutral-700;
-}
+  select.input,
+  select.select {
+    @apply appearance-none;
+    /* Icône chevron en SVG encodé */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' stroke='%23a3a3a3' stroke-width='1.5' viewBox='0 0 24 24'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8.25 9.75L12 13.5l3.75-3.75'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.6rem center; /* place le chevron à droite */
+    background-size: 1rem 1rem;
+    padding-right: 2rem; /* espace pour le chevron */
+    color: hsl(var(--fg));
+    background-color: transparent; /* on garde la bg fournie par .input/.select */
+  }
 
-.label {
-  @apply text-sm font-medium text-neutral-600 dark:text-neutral-300;
-}
+  .badge {
+    @apply inline-flex items-center rounded-full bg-neutral-900/60 px-2 py-0.5 text-xs ring-1 ring-[hsl(var(--border))];
+  }
+  .pill {
+    @apply inline-flex items-center rounded-full bg-neutral-800 px-2.5 py-1 text-xs font-medium ring-1 ring-[hsl(var(--border))];
+  }
 
-.badge {
-  @apply inline-flex items-center rounded-full border border-neutral-300 px-2 py-0.5 text-xs dark:border-neutral-700;
-}
+  /* Segmented control (pour tes tiers) */
+  .segmented {
+    @apply inline-flex overflow-hidden rounded-xl bg-neutral-900/60 ring-1 ring-[hsl(var(--border))];
+  }
+  .segmented button {
+    @apply px-3 py-1.5 text-sm font-medium text-neutral-300 transition hover:bg-neutral-800/70;
+  }
+  .segmented .active {
+    @apply bg-neutral-800 text-white;
+  }
 
-/* force les UI natives en dark */
-html {
-  color-scheme: dark;
+  /* Verre / hero */
+  .hero {
+    @apply relative overflow-hidden rounded-2xl ring-1 ring-[hsl(var(--border))];
+    background: linear-gradient(90deg, #0b0f1a 0%, #121826 50%, #0b0f1a 100%);
+  }
+  .hero::before {
+    content: "";
+    @apply absolute inset-0 opacity-20;
+    background: radial-gradient(80% 60% at 50% 0%, rgba(59, 130, 246, 0.14), transparent 60%);
+  }
+
+  /* Rareté (texte + fine pastille) */
+  .rarity-rare {
+    color: #0070dd;
+  }
+  .rarity-epic {
+    color: #a335ee;
+  }
+  .rarity-legendary {
+    color: #ff8000;
+  }
+  .rarity-artifact {
+    color: #e5cc80;
+  }
+
+  .tag-rare {
+    @apply ring-1;
+    border-color: #0070dd33;
+    background: #0070dd12;
+    color: #9fc8ff;
+  }
+  .tag-epic {
+    @apply ring-1;
+    border-color: #a335ee33;
+    background: #a335ee12;
+    color: #e2c9ff;
+  }
+  .tag-legendary {
+    @apply ring-1;
+    border-color: #ff800033;
+    background: #ff800012;
+    color: #ffd3a8;
+  }
+  .tag-artifact {
+    @apply ring-1;
+    border-color: #e5cc8033;
+    background: #e5cc8012;
+    color: #f3e9c4;
+  }
 }
 
 /* un peu de renfort pour Chrome/Firefox */

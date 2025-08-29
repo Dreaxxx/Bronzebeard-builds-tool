@@ -147,6 +147,7 @@ export default function EditBuild() {
                   onChange={(e) => {
                     setBuild({ ...build, title: e.target.value });
                   }}
+                  maxLength={30}
                 />
               </div>
               <div className="w-40">

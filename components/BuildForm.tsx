@@ -44,6 +44,7 @@ export default function BuildForm({ initial, onSubmit }: Props) {
             placeholder="Twilight Parangon Priest"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            maxLength={30}
           />
         </div>
         <div>

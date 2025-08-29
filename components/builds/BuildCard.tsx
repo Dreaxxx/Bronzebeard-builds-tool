@@ -9,6 +9,8 @@ import { Pill } from "@/components/ui";
 import type { Build } from "@/lib/models";
 import { deleteBuildEverywhere, deleteBuildLocal, unmarkBuildSavedLocally } from "@/lib/storage";
 
+import { TrashIcon } from "../icons";
+
 import type { Session } from "@supabase/supabase-js";
 
 type Props = {
@@ -72,20 +74,24 @@ export default function BuildCard({ build, variant, session, onDeleted, onUnsave
   const canEdit = variant === "my" && (isOwned || isLocal);
 
   return (
-    <div className="relative rounded-2xl border p-4">
+    <div className="relative rounded-xl border p-4">
       <div className="absolute right-2 top-2 flex gap-2">
         <button
           onClick={handlePrimaryAction}
           disabled={busy}
           className="rounded bg-red-600 px-2 py-1 text-white hover:bg-red-700"
         >
-          {busy
-            ? variant === "saved"
-              ? "Removing…"
-              : "Deleting…"
-            : variant === "saved"
-              ? "Remove"
-              : "Delete"}
+          {busy ? (
+            variant === "saved" ? (
+              "Removing…"
+            ) : (
+              "Deleting…"
+            )
+          ) : variant === "saved" ? (
+            <TrashIcon className="h-4 w-4" />
+          ) : (
+            <TrashIcon className="h-4 w-4" />
+          )}
         </button>
       </div>
 

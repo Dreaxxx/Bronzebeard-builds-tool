@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import CommentThread from "@/components/CommentThread";
 import EnchantRow from "@/components/EnchantRow";
-import { Card, Button, Pill } from "@/components/ui";
+import { Card, Pill } from "@/components/ui";
 
 import { useI18n } from "@/lib/i18n/store";
 import { type Build, type BuildItem, type Enchant, type Tier } from "@/lib/models";
@@ -151,8 +151,8 @@ export default function ViewBuild() {
         <div className="absolute inset-0 opacity-20 [background:radial-gradient(80%_60%_at_50%_0%,#3b82f620,transparent_60%)]" />
         <div className="relative p-6 md:p-8">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <div className="mb-1 flex flex-wrap gap-2 text-xs text-neutral-300">
+            <div className="max-w-4xl flex-1 md:pr-8 md:text-left md:leading-tight md:tracking-tight md:text-neutral-100">
+              <div className="mb-2 flex flex-wrap gap-2 text-xs text-neutral-300">
                 <span className="rounded-full bg-neutral-900/60 px-2 py-1 ring-1 ring-neutral-700">
                   {build.realm}
                 </span>
@@ -165,54 +165,18 @@ export default function ViewBuild() {
                   </span>
                 )}
               </div>
-              <h1 className="text-2xl font-bold leading-tight text-white md:text-3xl">
+              <h1 className="mt-4 text-2xl font-bold leading-tight text-white md:text-3xl">
                 {build.title}
               </h1>
               {build.description && (
-                <p className="mt-2 max-w-3xl whitespace-pre-wrap text-sm text-neutral-300">
+                <p className="mt-4 max-w-3xl whitespace-pre-wrap text-sm text-neutral-300">
                   {build.description}
                 </p>
               )}
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <Pill>❤️ {build.likes || 0}</Pill>
-
-              {build.isPublic && (
-                <Button
-                  disabled={liking}
-                  onClick={like}
-                  className="bg-emerald-600 hover:bg-emerald-700"
-                >
-                  {t("like.add")}
-                </Button>
-              )}
-
-              {!build.savedLocal ? (
-                <button
-                  onClick={saveLocal}
-                  disabled={saving}
-                  className="rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white shadow hover:bg-indigo-700"
-                  title="Save this build locally"
-                >
-                  {saving ? "Saving…" : "Save locally"}
-                </button>
-              ) : (
-                <button
-                  onClick={removeSaved}
-                  className="rounded-md bg-neutral-800 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-neutral-700 hover:bg-neutral-700"
-                  title="Remove from saved"
-                >
-                  Saved ✓ (remove)
-                </button>
-              )}
-
-              <Link
-                className="rounded-md bg-neutral-900 px-3 py-1.5 text-sm font-medium text-white ring-1 ring-neutral-700 hover:bg-neutral-800"
-                href={`/builds/${build.id}/edit`}
-              >
-                {t("common.edit")}
-              </Link>
+            <div className="flex items-center gap-2">
+              <Pill className="px-3 py-5 text-2xl">❤️ {build.likes || 0}</Pill>
             </div>
           </div>
 
