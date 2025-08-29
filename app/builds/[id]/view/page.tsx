@@ -75,7 +75,7 @@ export default function ViewBuild() {
     return () => {
       cancelled = true;
     };
-  }, [build?.id]);
+  }, [build, build?.id]);
 
   // Items quand tier choisi
   useEffect(() => {
@@ -88,7 +88,7 @@ export default function ViewBuild() {
     return () => {
       cancelled = true;
     };
-  }, [build?.id, tier]);
+  }, [build, build?.id, tier]);
 
   const itemsBySlot = useMemo(() => {
     const m: Record<string, BuildItem[]> = {};
