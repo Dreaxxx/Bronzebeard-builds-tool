@@ -8,7 +8,7 @@ import LanguageInit from "@/components/LanguageInit";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BronzeBeard Builds Manager v0.8.3",
+  title: "BronzeBeard Builds Manager v0.8.5",
   description: "i18n + Ascension DB search + filters",
   manifest: "/manifest.json",
   icons: {
