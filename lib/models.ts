@@ -19,6 +19,18 @@ export type Slot =
   | "Ranged"
   | "Tabard";
 
+export type WowClass =
+  | "Warrior"
+  | "Paladin"
+  | "Hunter"
+  | "Rogue"
+  | "Priest"
+  | "Death Knight"
+  | "Shaman"
+  | "Mage"
+  | "Warlock"
+  | "Druid";
+
 export type Role = "Caster/Range" | "Melee" | "Tank" | "Healer";
 
 export type Build = {
@@ -76,7 +88,8 @@ export type Comment = {
 };
 
 export const DEFAULT_TIERS: Tier[] = ["Raid", "M0", "M+<10", "M+10-14", "M+15+"];
-export const WOW_CLASSES = [
+
+export const WOW_CLASSES: WowClass[] = [
   "Warrior",
   "Paladin",
   "Hunter",
@@ -88,3 +101,16 @@ export const WOW_CLASSES = [
   "Druid",
   "Death Knight",
 ];
+
+export type MysticCatalog = {
+  id: string;
+  ascension_id: number;
+  name: string;
+  description: string | null;
+  rarity: Rarity;
+  class_tag: WowClass;
+  href: string | null;
+  created_by?: string | null;
+  created_at?: string;
+  updated_at?: string;
+};
