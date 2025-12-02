@@ -1,4 +1,4 @@
-import type { Slot } from "./models";
+import type { Slot } from "./types/items.types";
 
 export const SLOTS: readonly Slot[] = [
   "Head",

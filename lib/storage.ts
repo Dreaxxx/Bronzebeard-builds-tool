@@ -4,7 +4,10 @@ import { deleteBuildInCloud } from "@/lib/remote";
 import { db } from "./db";
 import { uid } from "./id";
 
-import type { Build, BuildItem, Enchant, Comment, Tier, Rarity, Slot } from "./models";
+import type { Build, Tier, Rarity, BuildComment } from "./types/build.types";
+import type { BuildEnchant } from "./types/enchants.types";
+import type { BuildItem, Slot } from "./types/items.types";
+
 
 export async function createBuild(
   partial: Omit<Build, "id" | "createdAt" | "updatedAt" | "likes">,
@@ -74,15 +77,15 @@ export async function removeItem(id: string) {
   await db.items.delete(id);
 }
 
-export async function listEnchants(buildId: string): Promise<Enchant[]> {
+export async function listEnchants(buildId: string): Promise<BuildEnchant[]> {
   return db.enchants.where("buildId").equals(buildId).toArray();
 }
 
 export async function upsertEnchant(
-  e: Partial<Enchant> & { buildId: string; name: string; rarity: Rarity; slot: string },
+  e: Partial<BuildEnchant> & { buildId: string; name: string; rarity: Rarity; slot: string },
 ) {
   const id = e.id ?? uid();
-  const record = { ...e, id } as Enchant;
+  const record = { ...e, id } as BuildEnchant;
   await db.enchants.put(record);
   return record;
 }
@@ -100,7 +103,7 @@ export async function addComment(
   body: string,
   parentId?: string,
 ) {
-  const c: Comment = {
+  const c: BuildComment = {
     id: uid(),
     buildId,
     authorName,

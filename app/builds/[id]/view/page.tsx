@@ -9,7 +9,6 @@ import EnchantRow from "@/components/EnchantRow";
 import { Card, Pill } from "@/components/ui";
 
 import { useI18n } from "@/lib/i18n/store";
-import { type Build, type BuildItem, type Enchant, type Tier } from "@/lib/models";
 import { rarityRank } from "@/lib/rarity";
 import { likePublicBuild, fetchBuildBundleFromCloud, putBuildDeep } from "@/lib/remote";
 import { SLOTS } from "@/lib/slots";
@@ -21,6 +20,9 @@ import {
   markBuildSavedLocally,
   unmarkBuildSavedLocally,
 } from "@/lib/storage";
+import type { Build, Tier } from "@/lib/types/build.types";
+import type { BuildEnchant } from "@/lib/types/enchants.types";
+import type { BuildItem } from "@/lib/types/items.types";
 
 export default function ViewBuild() {
   const { t } = useI18n();
@@ -30,7 +32,7 @@ export default function ViewBuild() {
   const [error, setError] = useState<string | null>(null);
   const [tier, setTier] = useState<Tier | null>(null);
   const [items, setItems] = useState<BuildItem[]>([]);
-  const [enchants, setEnchants] = useState<Enchant[]>([]);
+  const [enchants, setEnchants] = useState<BuildEnchant[]>([]);
   const [liking, setLiking] = useState(false);
   const [saving, setSaving] = useState(false);
 

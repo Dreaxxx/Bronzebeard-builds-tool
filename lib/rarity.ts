@@ -1,4 +1,4 @@
-import type { Rarity } from "./models";
+import type { Rarity } from "./types/build.types";
 
 export const RARITY_ORDER: Record<string, number> = {
   legendary: 0,

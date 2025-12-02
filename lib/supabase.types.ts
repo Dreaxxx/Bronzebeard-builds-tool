@@ -12,6 +12,7 @@ export type Database = {
         Row: {
           build_id: string | null;
           cost: number | null;
+          enchant_id: number | null;
           href: string | null;
           id: string;
           name: string;
@@ -22,6 +23,7 @@ export type Database = {
         Insert: {
           build_id?: string | null;
           cost?: number | null;
+          enchant_id?: number | null;
           href?: string | null;
           id: string;
           name: string;
@@ -32,6 +34,7 @@ export type Database = {
         Update: {
           build_id?: string | null;
           cost?: number | null;
+          enchant_id?: number | null;
           href?: string | null;
           id?: string;
           name?: string;
@@ -47,6 +50,13 @@ export type Database = {
             referencedRelation: "builds";
             referencedColumns: ["id"];
           },
+          {
+            foreignKeyName: "build_enchants_enchant_id_fkey";
+            columns: ["enchant_id"];
+            isOneToOne: false;
+            referencedRelation: "mystic_enchants";
+            referencedColumns: ["id"];
+          },
         ];
       };
       build_items: {
@@ -54,6 +64,7 @@ export type Database = {
           build_id: string | null;
           href: string | null;
           id: string;
+          item_id: number | null;
           name: string;
           notes: string | null;
           rank: number;
@@ -66,6 +77,7 @@ export type Database = {
           build_id?: string | null;
           href?: string | null;
           id: string;
+          item_id?: number | null;
           name: string;
           notes?: string | null;
           rank?: number;
@@ -78,6 +90,7 @@ export type Database = {
           build_id?: string | null;
           href?: string | null;
           id?: string;
+          item_id?: number | null;
           name?: string;
           notes?: string | null;
           rank?: number;
@@ -92,6 +105,13 @@ export type Database = {
             columns: ["build_id"];
             isOneToOne: false;
             referencedRelation: "builds";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "build_items_item_id_fkey";
+            columns: ["item_id"];
+            isOneToOne: false;
+            referencedRelation: "items";
             referencedColumns: ["id"];
           },
         ];
@@ -152,6 +172,93 @@ export type Database = {
           },
         ];
       };
+      items: {
+        Row: {
+          classID: number | null;
+          difficulty: string | null;
+          icon: string | null;
+          id: number;
+          ilvl: number | null;
+          inventoryType: number | null;
+          itemClass: string | null;
+          itemSubClass: string | null;
+          name: string | null;
+          quality: number | null;
+          qualityText: string | null;
+          reqLevel: number | null;
+          sellPrice: number | null;
+          slot: string | null;
+          stats: Json | null;
+          subClass: string | null;
+          subClassID: number | null;
+        };
+        Insert: {
+          classID?: number | null;
+          difficulty?: string | null;
+          icon?: string | null;
+          id: number;
+          ilvl?: number | null;
+          inventoryType?: number | null;
+          itemClass?: string | null;
+          itemSubClass?: string | null;
+          name?: string | null;
+          quality?: number | null;
+          qualityText?: string | null;
+          reqLevel?: number | null;
+          sellPrice?: number | null;
+          slot?: string | null;
+          stats?: Json | null;
+          subClass?: string | null;
+          subClassID?: number | null;
+        };
+        Update: {
+          classID?: number | null;
+          difficulty?: string | null;
+          icon?: string | null;
+          id?: number;
+          ilvl?: number | null;
+          inventoryType?: number | null;
+          itemClass?: string | null;
+          itemSubClass?: string | null;
+          name?: string | null;
+          quality?: number | null;
+          qualityText?: string | null;
+          reqLevel?: number | null;
+          sellPrice?: number | null;
+          slot?: string | null;
+          stats?: Json | null;
+          subClass?: string | null;
+          subClassID?: number | null;
+        };
+        Relationships: [];
+      };
+      mystic_enchants: {
+        Row: {
+          class: string | null;
+          description: string | null;
+          id: number;
+          level: number | null;
+          name: string;
+          rarity: string;
+        };
+        Insert: {
+          class?: string | null;
+          description?: string | null;
+          id: number;
+          level?: number | null;
+          name: string;
+          rarity: string;
+        };
+        Update: {
+          class?: string | null;
+          description?: string | null;
+          id?: number;
+          level?: number | null;
+          name?: string;
+          rarity?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           avatar_url: string | null;
@@ -178,10 +285,24 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      show_limit: { Args: never; Returns: number };
+      show_trgm: { Args: { "": string }; Returns: string[] };
+      unaccent: { Args: { "": string }; Returns: string };
     };
     Enums: {
-      [_ in never]: never;
+      rarity_enum: "Rare" | "Epic" | "Legendary" | "Artifact";
+      wow_class_enum:
+        | "Warrior"
+        | "Paladin"
+        | "Hunter"
+        | "Rogue"
+        | "Priest"
+        | "DeathKnight"
+        | "Shaman"
+        | "Mage"
+        | "Warlock"
+        | "Druid"
+        | "Any";
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -306,6 +427,21 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      rarity_enum: ["Rare", "Epic", "Legendary", "Artifact"],
+      wow_class_enum: [
+        "Warrior",
+        "Paladin",
+        "Hunter",
+        "Rogue",
+        "Priest",
+        "DeathKnight",
+        "Shaman",
+        "Mage",
+        "Warlock",
+        "Druid",
+        "Any",
+      ],
+    },
   },
 } as const;

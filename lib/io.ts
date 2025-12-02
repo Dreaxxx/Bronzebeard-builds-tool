@@ -1,14 +1,17 @@
 "use client";
 
 import { db } from "@/lib/db";
-import type { Build, BuildItem, Enchant, Tier } from "@/lib/models";
 import { getBuild, listItems, listEnchants, createBuild } from "@/lib/storage";
+
+import type { Build, Tier } from "./types/build.types";
+import type { BuildEnchant } from "./types/enchants.types";
+import type { BuildItem } from "./types/items.types";
 
 export type BuildBundle = {
   version: 1;
   build: Build;
   items: BuildItem[];
-  enchants: Enchant[];
+  enchants: BuildEnchant[];
 };
 
 const uid = () =>
@@ -24,7 +27,7 @@ export async function exportBuildBundle(buildId: string): Promise<Blob> {
   // On essaie d’abord par tiers, puis fallback: tout le stock items pour ce build
   let itemsNow: BuildItem[] = [];
   if (build.tiers && build.tiers.length) {
-    itemsNow = (await Promise.all(build.tiers.map((t) => listItems(build.id, t)))).flat();
+    itemsNow = (await Promise.all(build.tiers.map((t: Tier) => listItems(build.id, t)))).flat();
   }
   if (!itemsNow.length) {
     // Récupère tout si build.tiers vide
@@ -77,21 +80,22 @@ export async function importBuildBundleFile(file: File): Promise<string> {
     buildId: created.id,
     tier: ((it.tier as any) ?? tiers[0]) as Tier,
     rank: it.rank ?? 1,
-    stats: it.stats ?? {},
     source: it.source ?? "",
     notes: it.notes ?? "",
     href: it.href ?? null,
+    itemId: it.itemId ?? null,
     createdAt: (it as any).createdAt ?? now,
     updatedAt: (it as any).updatedAt ?? now,
   }));
 
-  const enchantsToInsert: Enchant[] = (raw.enchants ?? []).map((en) => ({
+  const enchantsToInsert: BuildEnchant[] = (raw.enchants ?? []).map((en) => ({
     ...en,
     id: uid(),
     buildId: created.id,
     cost: en.cost ?? 0,
     notes: en.notes ?? "",
     href: en.href ?? null,
+    enchantId: en.enchantId ?? null,
     createdAt: (en as any).createdAt ?? now,
     updatedAt: (en as any).updatedAt ?? now,
   }));

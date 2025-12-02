@@ -1,7 +1,7 @@
 "use client";
-import type { Build } from "@/lib/models";
 import { uploadBuild } from "@/lib/remote";
 import { listItems, listEnchants } from "@/lib/storage";
+import type { Build } from "@/lib/types/build.types";
 
 import { Button, Row } from "./ui";
 export default function SyncButtons({ build }: { build: Build }) {

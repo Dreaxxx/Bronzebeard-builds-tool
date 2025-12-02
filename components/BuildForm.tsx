@@ -3,8 +3,8 @@ import { useState, useMemo } from "react";
 
 import { classOptionsForRole, isClassValidForRole } from "@/lib/classes";
 import { useI18n } from "@/lib/i18n/store";
-import { DEFAULT_TIERS } from "@/lib/models";
-import type { Build, Role } from "@/lib/models";
+import type { Build, Role} from "@/lib/types/build.types";
+import { DEFAULT_TIERS } from "@/lib/types/build.types";
 
 import { Button, Input, Label, Select, Card, Row, PrimaryButton, Textarea } from "./ui";
 

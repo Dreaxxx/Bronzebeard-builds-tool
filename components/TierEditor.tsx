@@ -2,9 +2,10 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { useI18n } from "@/lib/i18n/store";
-import type { Build, BuildItem, Slot, Tier } from "@/lib/models";
 import { SLOTS } from "@/lib/slots";
 import { listItems, upsertItem, removeItem } from "@/lib/storage";
+import type { Build, Tier } from "@/lib/types/build.types";
+import type { BuildItem, Slot } from "@/lib/types/items.types";
 
 import SearchDrawer from "./SearchDrawer";
 import { Button, Input, Label, Card, Select, Textarea } from "./ui";

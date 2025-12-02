@@ -3,7 +3,10 @@ import { db } from "@/lib/db";
 
 import { supabase } from "./supabaseClient";
 
-import type { Build, BuildItem, Enchant, Tier } from "./models";
+import type { Build, Tier } from "./types/build.types";
+import type { BuildEnchant } from "./types/enchants.types";
+import type { BuildItem } from "./types/items.types";
+
 
 export async function authGetUser() {
   const sb = supabase();
@@ -42,7 +45,7 @@ export async function likePublicBuild(buildId: string) {
   if (e2) throw e2;
 }
 
-export async function uploadBuild(build: Build, items: BuildItem[], enchants: Enchant[]) {
+export async function uploadBuild(build: Build, items: BuildItem[], enchants: BuildEnchant[]) {
   const sb = supabase();
   if (!sb) throw new Error("Supabase not configured");
   const { data: session } = await sb.auth.getSession();
@@ -74,10 +77,10 @@ export async function uploadBuild(build: Build, items: BuildItem[], enchants: En
       slot: it.slot,
       rank: it.rank,
       name: it.name,
-      stats: it.stats ?? {},
       source: it.source ?? null,
       notes: it.notes ?? null,
       href: it.href ?? null,
+      item_id: it.itemId ? Number(it.itemId) : null,
     }));
     const { error: e2 } = await sb.from("build_items").insert(payload);
     if (e2) throw e2;
@@ -94,6 +97,7 @@ export async function uploadBuild(build: Build, items: BuildItem[], enchants: En
       cost: en.cost ?? null,
       notes: en.notes ?? null,
       href: en.href ?? null,
+      enchant_id: en.enchantId ? Number(en.enchantId) : null,
     }));
     const { error: e3 } = await sb.from("build_enchants").insert(payload);
     if (e3) throw e3;
@@ -103,7 +107,7 @@ export async function uploadBuild(build: Build, items: BuildItem[], enchants: En
 export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
   build: Build;
   items: BuildItem[];
-  enchants: Enchant[];
+  enchants: BuildEnchant[];
 } | null> {
   const sb = supabase();
   if (!sb) throw new Error("Supabase not configured");
@@ -152,13 +156,14 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
     source: it.source ?? undefined,
     notes: it.notes ?? undefined,
     href: it.href ?? null,
+    itemId: typeof it.item_id === "number" ? String(it.item_id) : (it.item_id ?? null),
   }));
 
-  const mappedEnchants: Enchant[] = enchants!.map((en) => ({
+  const mappedEnchants: BuildEnchant[] = enchants!.map((en) => ({
     id: en.id,
     buildId: en.build_id as string,
     name: en.name,
-    rarity: en.rarity as Enchant["rarity"],
+    rarity: en.rarity as BuildEnchant["rarity"],
     slot: en.slot,
     cost: en.cost ?? undefined,
     notes: en.notes ?? undefined,
@@ -171,7 +176,7 @@ export async function fetchBuildBundleFromCloud(buildId: string): Promise<{
 export async function putBuildDeep(bundle: {
   build: Build;
   items: BuildItem[];
-  enchants: Enchant[];
+  enchants: BuildEnchant[];
 }) {
   const { build, items, enchants } = bundle;
   await db.transaction("rw", db.builds, db.items, db.enchants, async () => {
