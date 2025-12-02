@@ -7,7 +7,7 @@ export const ROLE_CLASS_OPTIONS: Record<Role, readonly string[]> = {
   Melee: ["Rogue", "Druid", "Shaman", "Hunter", "Paladin", "Warrior"],
   Healer: ["Priest", "Druid", "Shaman", "Paladin"],
   Tank: ["Druid", "Shaman", "Paladin", "Warrior", "Warlock"],
-} as const;
+};
 
 export function classOptionsForRole(role: Role): readonly string[] {
   return ROLE_CLASS_OPTIONS[role] ?? [];

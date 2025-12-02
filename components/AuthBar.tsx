@@ -9,6 +9,7 @@ import type { User as SupabaseUser } from "@supabase/supabase-js";
 
 export default function AuthBar() {
   const [user, setUser] = useState<SupabaseUser | null>(null);
+
   async function refresh() {
     try {
       setUser(await authGetUser());

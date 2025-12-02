@@ -68,7 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <main className="container py-6">{children}</main>
 
         <footer className="container py-6 text-xs text-neutral-500">
-          Created by Topaze, inspired by Bronzebeard. All data from{" "}
+          Created by Topaz, inspired by Bronzebeard. All data from{" "}
           <a href="https://db.ascension.gg/" target="_blank" rel="noreferrer">
             Ascension
           </a>
