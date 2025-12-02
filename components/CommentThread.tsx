@@ -1,8 +1,8 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
 
-import type { Build, Comment } from "@/lib/models";
 import { listComments, addComment, deleteComment } from "@/lib/storage";
+import type { Build, BuildComment } from "@/lib/types/build.types";
 
 import { Button, Label, Card, Textarea } from "./ui";
 
@@ -11,8 +11,8 @@ function CommentItem({
   onReply,
   onDelete,
 }: {
-  c: Comment;
-  onReply: (parent: Comment) => void;
+  c: BuildComment;
+  onReply: (parent: BuildComment) => void;
   onDelete: (id: string) => void;
 }) {
   return (
@@ -35,10 +35,10 @@ function CommentItem({
 }
 
 export default function CommentThread({ build }: { build: Build }) {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<BuildComment[]>([]);
   const [author, setAuthor] = useState("");
   const [body, setBody] = useState("");
-  const [replyTo, setReplyTo] = useState<Comment | null>(null);
+  const [replyTo, setReplyTo] = useState<BuildComment | null>(null);
 
   const refresh = useCallback(async () => {
     {
@@ -59,10 +59,10 @@ export default function CommentThread({ build }: { build: Build }) {
     await refresh();
   }
 
-  function treeify(list: Comment[]) {
-    const map: Record<string, Comment & { children: Comment[] }> = {};
+  function treeify(list: BuildComment[]) {
+    const map: Record<string, BuildComment & { children: BuildComment[] }> = {};
     list.forEach((c) => (map[c.id] = { ...c, children: [] }));
-    const roots: (Comment & { children: Comment[] })[] = [];
+    const roots: (BuildComment & { children: BuildComment[] })[] = [];
     list.forEach((c) => {
       if (c.parentId && map[c.parentId]) map[c.parentId].children.push(map[c.id]);
       else roots.push(map[c.id]);

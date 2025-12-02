@@ -5,9 +5,9 @@ import { useEffect, useMemo, useState } from "react";
 import { Card, Select } from "@/components/ui";
 
 import { useI18n } from "@/lib/i18n/store";
-import type { Build } from "@/lib/models";
 import { listBuilds } from "@/lib/storage";
 import { supabase } from "@/lib/supabaseClient";
+import type { Build } from "@/lib/types/build.types";
 
 type SortKey = "updatedAt" | "createdAt" | "likes" | "classTag";
 

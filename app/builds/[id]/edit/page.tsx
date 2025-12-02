@@ -9,11 +9,11 @@ import { Button, Card, Input, Label, Select, Textarea } from "@/components/ui";
 
 import { useI18n } from "@/lib/i18n/store";
 import { exportBuildBundle, importBuildBundleFile, downloadBlob } from "@/lib/io";
-import { WOW_CLASSES } from "@/lib/models";
-import type { Build } from "@/lib/models";
 import { uploadBuild } from "@/lib/remote";
 import { getBuild, listEnchants, listItems, updateBuild } from "@/lib/storage";
 import { supabase } from "@/lib/supabaseClient";
+import type { Build} from "@/lib/types/build.types";
+import { WOW_CLASSES } from "@/lib/types/build.types";
 
 import type { Session } from "@supabase/supabase-js";
 

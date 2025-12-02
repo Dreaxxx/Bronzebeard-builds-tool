@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 
 import { useI18n } from "@/lib/i18n/store";
-import type { Build, Enchant } from "@/lib/models";
 import { listEnchants, upsertEnchant, removeEnchant } from "@/lib/storage";
+import type { Build } from "@/lib/types/build.types";
+import type { BuildEnchant } from "@/lib/types/enchants.types";
 
 import EnchantRow from "./EnchantRow";
 import SearchDrawer from "./SearchDrawer";
@@ -13,7 +14,7 @@ import { Button, Input, Label, Card, Select, Textarea } from "./ui";
 export default function EnchantEditor({ build }: { build: Build }) {
   const { t } = useI18n();
 
-  const [enchants, setEnchants] = useState<Enchant[]>([]);
+  const [enchants, setEnchants] = useState<BuildEnchant[]>([]);
   useEffect(() => {
     (async () => setEnchants(await listEnchants(build.id)))();
   }, [build.id]);
@@ -30,7 +31,7 @@ export default function EnchantEditor({ build }: { build: Build }) {
     setEnchants(await listEnchants(build.id));
   }
 
-  async function save(en: Enchant) {
+  async function save(en: BuildEnchant) {
     await upsertEnchant(en);
     setEnchants(await listEnchants(build.id));
   }

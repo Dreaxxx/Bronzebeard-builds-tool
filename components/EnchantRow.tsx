@@ -1,6 +1,6 @@
 "use client";
-import type { Rarity } from "@/lib/models";
 import { colorForRarity, withAlpha } from "@/lib/rarity";
+import type { Rarity } from "@/lib/types/build.types";
 
 import RarityTag from "./RarityTag";
 

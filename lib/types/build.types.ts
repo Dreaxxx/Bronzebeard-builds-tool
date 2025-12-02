@@ -1,23 +1,4 @@
 export type Tier = "All" | "Raid" | "M0" | "M+<10" | "M+10-14" | "M+15+";
-export type Slot =
-  | "Head"
-  | "Neck"
-  | "Shoulder"
-  | "Back"
-  | "Chest"
-  | "Wrist"
-  | "Hands"
-  | "Waist"
-  | "Legs"
-  | "Feet"
-  | "Ring1"
-  | "Ring2"
-  | "Trinket1"
-  | "Trinket2"
-  | "Weapon"
-  | "OffHand"
-  | "Ranged"
-  | "Tabard";
 
 export type WowClass =
   | "Warrior"
@@ -25,7 +6,6 @@ export type WowClass =
   | "Hunter"
   | "Rogue"
   | "Priest"
-  | "Death Knight"
   | "Shaman"
   | "Mage"
   | "Warlock"
@@ -52,33 +32,9 @@ export type Build = {
   savedAt?: number | null;
 };
 
-export type BuildItem = {
-  id: string;
-  buildId: string;
-  tier: Tier;
-  slot: Slot;
-  rank: number;
-  name: string;
-  stats?: Record<string, number>;
-  source?: string;
-  notes?: string;
-  href?: string | null;
-};
-
 export type Rarity = "Rare" | "Epic" | "Legendary" | "Artifact";
 
-export type Enchant = {
-  id: string;
-  buildId: string;
-  name: string;
-  rarity: Rarity;
-  slot: string;
-  cost?: number;
-  notes?: string;
-  href?: string | null;
-};
-
-export type Comment = {
+export type BuildComment = {
   id: string;
   buildId: string;
   authorName: string;
@@ -99,18 +55,5 @@ export const WOW_CLASSES: WowClass[] = [
   "Mage",
   "Warlock",
   "Druid",
-  "Death Knight",
+  //"Death Knight",
 ];
-
-export type MysticCatalog = {
-  id: string;
-  ascension_id: number;
-  name: string;
-  description: string | null;
-  rarity: Rarity;
-  class_tag: WowClass;
-  href: string | null;
-  created_by?: string | null;
-  created_at?: string;
-  updated_at?: string;
-};

@@ -1,12 +1,11 @@
-// lib/classes.ts
-import type { Role } from "@/lib/models";
+import type { Role } from "./types/build.types";
 
 /** Class options for each role */
 export const ROLE_CLASS_OPTIONS: Record<Role, readonly string[]> = {
   "Caster/Range": ["Priest", "Mage", "Warlock", "Druid", "Shaman", "Hunter"],
   Melee: ["Rogue", "Druid", "Shaman", "Hunter", "Paladin", "Warrior"],
   Healer: ["Priest", "Druid", "Shaman", "Paladin"],
-  Tank: ["Druid", "Shaman", "Paladin", "Warrior", "Warlock"],
+  Tank: ["Druid", "Shaman", "Paladin", "Warrior"], // Warlock soon ?
 };
 
 export function classOptionsForRole(role: Role): readonly string[] {

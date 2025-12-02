@@ -6,9 +6,9 @@ import BuildForm from "@/components/BuildForm";
 import BuildCard from "@/components/builds/BuildCard";
 
 import { useI18n } from "@/lib/i18n/store";
-import type { Build } from "@/lib/models";
 import { listBuilds, createBuild } from "@/lib/storage";
 import { supabase } from "@/lib/supabaseClient";
+import type { Build } from "@/lib/types/build.types";
 
 import type { Session } from "@supabase/supabase-js";
 

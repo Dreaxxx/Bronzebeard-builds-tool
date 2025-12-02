@@ -1,4 +1,3 @@
-// components/builds/BuildCard.tsx
 "use client";
 
 import Link from "next/link";
@@ -7,8 +6,8 @@ import { useMemo, useState } from "react";
 import { Pill } from "@/components/ui";
 
 import { useI18n } from "@/lib/i18n/store";
-import type { Build } from "@/lib/models";
 import { deleteBuildEverywhere, deleteBuildLocal, unmarkBuildSavedLocally } from "@/lib/storage";
+import type { Build } from "@/lib/types/build.types";
 
 import { TrashIcon } from "../icons";
 
